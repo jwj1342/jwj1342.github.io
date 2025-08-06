@@ -13,6 +13,14 @@ I am applying to Ph.D programs this year. My current research interests lie in l
 
 # Research
 
+- AppAgentX: Evolving GUI Agents as Proficient Smartphone Users
+
+- Learning to Be A Doctor: Searching for Effective Medical Agent Architectures
+
+- Adaptive Mobile Agent for Dynamic Interactions
+
+- Skeleton-Guided Spatial-Temporal Feature Learning for Video-Based Visible-Infrared Person Re-Identification
+
 # Skills
 
 # News
