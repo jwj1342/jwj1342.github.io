@@ -9,7 +9,9 @@ redirect_from:
 
 Hi, I'm Wenjia Jiang, currently a research assistant at AGI Lab, Westlake University, advised by Prof. Chi Zhang. I received my Bachelor’s degree in software engineering from the School of Software, Henan University of China.
 
-# Research Experience
+I am applying to Ph.D programs this year. My current research interests lie in large language models (LLMs), multimodal learning, and artificial intelligence. I am particularly interested in developing LLM-based agents.
+
+# Research
 
 # Skills
 
