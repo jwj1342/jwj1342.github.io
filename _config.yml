@@ -23,13 +23,13 @@ repository: "jwj1342/jwj1342.github.io"
 author:
   # Biographic information
   avatar: "profile.png"
-  name: "Your Sidebar Name"
+  name: "Wenjia Jiang"
   pronouns: # example: "she/her"
   bio: "Short biography for the left-hand sidebar"
-  location: "Earth"
-  employer: "Red Brick University"
+  location: "Hangzhou, China"
+  # employer: "Red Brick University"
   uri: # URL
-  email: "none@example.org"
+  email: "jiangwenjia@westlake.edu.cn"
 
   # Academic websites
   academia: # URL
