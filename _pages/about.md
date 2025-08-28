@@ -7,7 +7,7 @@ redirect_from:
   - /about.html
 ---
 
-Hi, I'm Wenjia Jiang, currently a research assistant at AGI Lab, Westlake University, advised by Prof. Chi Zhang. I received my Bachelor’s degree in software engineering from the School of Software, Henan University of China.
+Hi, I'm Wenjia Jiang, currently a research assistant at AGI Lab, Westlake University, advised by [Prof. Chi Zhang](https://icoz69.github.io/). I received my Bachelor’s degree in software engineering from the School of Software, Henan University of China.
 
 I am applying to Ph.D programs this year (26 fall). My current research interests lie in large language models (LLMs), multimodal learning, and artificial intelligence. I am particularly interested in developing LLM-based agents.
 [Download my CV](files/CV_Wenjia_Jiang.pdf)
@@ -40,7 +40,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
       An innovative approach to searching AI agent architectures capable of medical reasoning and diagnosis in medical scenarios.
     </p>
     <div>
-      <a href="https://arxiv.org/abs/2504.11301">PDF</a>
+      <a href="https://arxiv.org/pdf/2504.11301">PDF</a>
     </div>
   </div>
 </div>
@@ -49,7 +49,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
 
 **ACGs: Agents Can Generate SQL by Querying Trees Like Expert**
 
-Designed a novel framework to enhance the accuracy of LLM-based agents in complex NL2SQL tasks for enterprise scenarios. Simulated human data scientists' database exploration via Monte Carlo search, leveraging the discovered structural information to guide SQL generation for challenging queries. Preliminary evaluation on benchmarks such as **Spider 2.0** shows promising results. (_📝 Under review at ICLR 2026_)
+Supervised jointly by [Prof. Chi Zhang](https://icoz69.github.io/) and [Prof. Yiwei Wang](https://wangywust.github.io/) (University of California, Merced). Designed a novel framework to enhance the accuracy of LLM-based agents in complex NL2SQL tasks for enterprise scenarios. Simulated human data scientists' database exploration via Monte Carlo search, leveraging the discovered structural information to guide SQL generation for challenging queries. Preliminary evaluation on benchmarks such as **Spider 2.0** shows promising results. (_📝 Under review at ICLR 2026_)
 
 **Paper2Beamer**
 
