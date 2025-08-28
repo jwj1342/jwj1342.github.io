@@ -21,7 +21,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
   <div style="flex: 1;">
     <h3 style="margin-top: 0; color: #2c3e50;">AppAgentX: Evolving GUI Agents as Proficient Smartphone Users</h3>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
-      A novel framework for training GUI agents to interact with smartphone applications like human users, featuring advanced visual understanding and action planning capabilities.
+      A novel evolutionary framework for GUI agents that enhances operational efficiency through memory mechanisms and action evolution.
     </p>
     <div style="margin-top: 15px;">
       <a href="https://appagentx.github.io/">Project Page</a> | <a href="https://arxiv.org/pdf/2503.02268.pdf">PDF</a> | <a href="https://github.com/Westlake-AGI-Lab/AppAgentX">Code</a> <img src="https://img.shields.io/github/stars/Westlake-AGI-Lab/AppAgentX?style=social" alt="GitHub stars" style="vertical-align: middle;">
@@ -36,8 +36,8 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
   <div style="flex: 1;">
     <h3 style="margin-top: 0; color: #2c3e50;">Learning to Be A Doctor: Searching for Effective Medical Agent Architectures</h3>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
-      <strong>Accepted by MM2025</strong><br>
-      An innovative approach to developing AI agents capable of medical reasoning and diagnosis, exploring different architectural designs for optimal performance in healthcare scenarios.
+      <strong style="color: #27ae60;">Accepted by ACM MM 2025</strong><br>
+      An innovative approach to developing AI agents capable of medical reasoning and diagnosis, exploring different architectural designs for optimal performance in medical scenarios.
     </p>
     <div style="margin-top: 15px;">
       <a href="https://arxiv.org/abs/2504.11301">PDF</a>
@@ -47,19 +47,19 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
 
 # Current Research
 
-## **ACGs: Agents Can Generate SQL by Querying Trees Like Expert**
-
-_📝 Under review at ICLR 2026_
+**ACGs: Agents Can Generate SQL by Querying Trees Like Expert**
 
 Designed a novel framework to enhance the accuracy of LLM-based agents in complex NL2SQL tasks for enterprise scenarios. Simulated human data scientists' database exploration via Monte Carlo search, leveraging the discovered structural information to guide SQL generation for challenging queries. Preliminary evaluation on benchmarks such as **Spider 2.0** shows promising results.
 
+_📝 Under review at ICLR 2026_
+
 ---
 
-## **Paper2Beamer**
-
-_📝 Under review at CHI 2026_
+**Paper2Beamer**
 
 Developed a system leveraging an LLM-based agent to convert academic papers into presentation slides. Investigated interactive slide modification with humans in the loop, drawing on concepts from **human-computer interaction** and **educational theory**.
+
+_📝 Under review at CHI 2026_
 
 # Skills
 
