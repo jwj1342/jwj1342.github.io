@@ -21,7 +21,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
   <div style="flex: 1;">
     <h3 style="margin-top: 0; color: #2c3e50;">AppAgentX: Evolving GUI Agents as Proficient Smartphone Users</h3>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
-      A novel evolutionary framework for GUI agents that enhances operational efficiency through memory mechanisms and action evolution.
+      A novel evolutionary framework for GUI agents that enhances operational efficiency through action evolution.
     </p>
     <div>
       <a href="https://appagentx.github.io/">Project Page</a> | <a href="https://arxiv.org/pdf/2503.02268.pdf">PDF</a> | <a href="https://github.com/Westlake-AGI-Lab/AppAgentX">Code</a> <img src="https://img.shields.io/github/stars/Westlake-AGI-Lab/AppAgentX?style=social" alt="GitHub stars" style="vertical-align: middle;">
@@ -37,7 +37,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
     <h3 style="margin-top: 0; color: #2c3e50;">Learning to Be A Doctor: Searching for Effective Medical Agent Architectures</h3>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
       <strong style="color: #27ae60;">Accepted by ACM MM 2025</strong><br>
-      An innovative approach to developing AI agents capable of medical reasoning and diagnosis, exploring different architectural designs for optimal performance in medical scenarios.
+      An innovative approach to searching AI agent architectures capable of medical reasoning and diagnosis in medical scenarios.
     </p>
     <div>
       <a href="https://arxiv.org/abs/2504.11301">PDF</a>
