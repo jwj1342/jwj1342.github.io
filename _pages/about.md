@@ -10,7 +10,6 @@ redirect_from:
 Hi, I'm Wenjia Jiang, currently a research assistant at AGI Lab, Westlake University, advised by Prof. Chi Zhang. I received my Bachelor’s degree in software engineering from the School of Software, Henan University of China.
 
 I am applying to Ph.D programs this year (26 fall). My current research interests lie in large language models (LLMs), multimodal learning, and artificial intelligence. I am particularly interested in developing LLM-based agents.
-
 [Download my CV](files/CV_Wenjia_Jiang.pdf)
 
 # Selected Research Projects
@@ -21,12 +20,14 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
   </div>
   <div style="flex: 1;">
     <h3 style="margin-top: 0; color: #2c3e50;">AppAgentX: Evolving GUI Agents as Proficient Smartphone Users</h3>
+    <div style="margin: 8px 0;">
+      <img src="https://img.shields.io/github/stars/Westlake-AGI-Lab/AppAgentX?style=social" alt="GitHub stars" style="vertical-align: middle;">
+    </div>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
       A novel framework for training GUI agents to interact with smartphone applications like human users, featuring advanced visual understanding and action planning capabilities.
     </p>
     <div style="margin-top: 15px;">
-      <a href="https://appagentx.github.io/" style="display: inline-block; padding: 6px 12px; margin-right: 10px; background-color: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">项目页面</a>
-      <a href="https://arxiv.org/pdf/2503.02268.pdf" style="display: inline-block; padding: 6px 12px; margin-right: 10px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">论文</a>
+      [Project Page](https://appagentx.github.io/) | [PDF](https://arxiv.org/pdf/2503.02268.pdf) | [Code](https://github.com/Westlake-AGI-Lab/AppAgentX)
     </div>
   </div>
 </div>
@@ -42,7 +43,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
       An innovative approach to developing AI agents capable of medical reasoning and diagnosis, exploring different architectural designs for optimal performance in healthcare scenarios.
     </p>
     <div style="margin-top: 15px;">
-      <a href="https://arxiv.org/abs/2504.11301" style="display: inline-block; padding: 6px 12px; margin-right: 10px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">论文</a>
+      [PDF](https://arxiv.org/abs/2504.11301)
     </div>
   </div>
 </div>
