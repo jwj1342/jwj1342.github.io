@@ -1,7 +1,6 @@
 ---
 title: "Skeleton-Guided Spatial-Temporal Feature Learning for Video-Based Visible-Infrared Person Re-Identification"
 collection: publications
-category: manuscripts
 permalink: /publication/2024-12-11-skeleton-guided-spatial-temporal
 excerpt: "Video-based visible-infrared person re-identification (VVI-ReID) is challenging due to significant modality feature discrepancies. This work proposes a novel Skeleton-guided spatial-Temporal feAture leaRning (STAR) method that uses skeleton information to improve spatial-temporal features in videos of both modalities."
 date: 2024-12-11

@@ -1,7 +1,6 @@
 ---
 title: "Learning to Be A Doctor: Searching for Effective Medical Agent Architectures"
 collection: publications
-category: conferences
 permalink: /publication/2025-04-07-learning-to-be-doctor
 excerpt: "This paper introduces a novel framework for the automated design of medical agent architectures, defining a hierarchical and expressive agent search space that enables dynamic workflow adaptation through structured modifications at multiple levels."
 date: 2025-04-07

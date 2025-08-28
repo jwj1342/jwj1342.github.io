@@ -1,7 +1,6 @@
 ---
 title: "AppAgentX: Evolving GUI Agents as Proficient Smartphone Users"
 collection: publications
-category: manuscripts
 permalink: /publication/2025-03-04-appagentx-evolving-gui
 excerpt: "This work proposes a novel evolutionary framework for GUI agents that enhances operational efficiency while retaining intelligence and flexibility through a memory mechanism that records task execution history and evolves high-level actions."
 date: 2025-03-04

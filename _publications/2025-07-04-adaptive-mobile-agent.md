@@ -1,7 +1,6 @@
 ---
 title: "Adaptive Mobile Agent for Dynamic Interactions"
 collection: publications
-category: conferences
 permalink: /publication/2025-07-04-adaptive-mobile-agent
 excerpt: "This work presents a novel LLM-based multimodal agent framework for mobile devices, designed to enhance interaction and adaptive capabilities in dynamic mobile environments through autonomous navigation and human-like behaviors."
 date: 2025-07-04

@@ -24,7 +24,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
       A novel framework for training GUI agents to interact with smartphone applications like human users, featuring advanced visual understanding and action planning capabilities.
     </p>
     <div style="margin-top: 15px;">
-      <a href="https://appagentx.github.io/">Project Page</a> | <a href="https://arxiv.org/pdf/2503.02268.pdf">PDF</a> | <a href="https://github.com/Westlake-AGI-Lab/AppAgentX">Code</a> | <img src="https://img.shields.io/github/stars/Westlake-AGI-Lab/AppAgentX?style=social" alt="GitHub stars" style="vertical-align: middle;">
+      <a href="https://appagentx.github.io/">Project Page</a> | <a href="https://arxiv.org/pdf/2503.02268.pdf">PDF</a> | <a href="https://github.com/Westlake-AGI-Lab/AppAgentX">Code</a> <img src="https://img.shields.io/github/stars/Westlake-AGI-Lab/AppAgentX?style=social" alt="GitHub stars" style="vertical-align: middle;">
     </div>
   </div>
 </div>
