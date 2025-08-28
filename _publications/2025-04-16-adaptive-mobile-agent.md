@@ -1,9 +1,9 @@
 ---
 title: "Adaptive Mobile Agent for Dynamic Interactions"
 collection: publications
-permalink: /publication/2025-07-04-adaptive-mobile-agent
+permalink: /publication/2025-04-16-adaptive-mobile-agent
 excerpt: "This work presents a novel LLM-based multimodal agent framework for mobile devices, designed to enhance interaction and adaptive capabilities in dynamic mobile environments through autonomous navigation and human-like behaviors."
-date: 2025-07-04
+date: 2025-04-16
 venue: "IEEE International Conference on Multimedia and Expo (ICME) 2025"
 citation: "Li, Y., Zhang, C., Yang, W., Fu, B., Cheng, P., Chen, X., Chen, L., & Wei, Y. (2025). Adaptive Mobile Agent for Dynamic Interactions. In Proceedings of IEEE International Conference on Multimedia and Expo (ICME) 2025."
 ---

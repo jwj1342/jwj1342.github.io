@@ -47,13 +47,19 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
 
 # Current Research
 
-- ACGs: Agents Can Generate SQL by Querying Trees Like Expert
+## **ACGs: Agents Can Generate SQL by Querying Trees Like Expert**
 
-  Designed a novel framework to enhance the accuracy of LLM-based agents in complex NL2SQL tasks for enterprise scenarios. Simulated human data scientists’ database exploration via Monte Carlo search, leveraging the discovered structural information to guide SQL generation for challenging queries. Preliminary evaluation on benchmarks such as Spider 2.0 shows promising results.
+_📝 Under review at ICLR 2026_
 
-- Paper2Beamer
+Designed a novel framework to enhance the accuracy of LLM-based agents in complex NL2SQL tasks for enterprise scenarios. Simulated human data scientists' database exploration via Monte Carlo search, leveraging the discovered structural information to guide SQL generation for challenging queries. Preliminary evaluation on benchmarks such as **Spider 2.0** shows promising results.
 
-  Developed a system leveraging an LLM-based agent to convert academic papers into presentation slides. Investigated interactive slide modification with humans in the loop, drawing on concepts from human-computer interaction and educational theory.
+---
+
+## **Paper2Beamer**
+
+_📝 Under review at CHI 2026_
+
+Developed a system leveraging an LLM-based agent to convert academic papers into presentation slides. Investigated interactive slide modification with humans in the loop, drawing on concepts from **human-computer interaction** and **educational theory**.
 
 # Skills
 
