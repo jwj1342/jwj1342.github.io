@@ -27,7 +27,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
       A novel framework for training GUI agents to interact with smartphone applications like human users, featuring advanced visual understanding and action planning capabilities.
     </p>
     <div style="margin-top: 15px;">
-      [Project Page](https://appagentx.github.io/) | [PDF](https://arxiv.org/pdf/2503.02268.pdf) | [Code](https://github.com/Westlake-AGI-Lab/AppAgentX)
+      <a href="https://appagentx.github.io/">Project Page</a> | <a href="https://arxiv.org/pdf/2503.02268.pdf">PDF</a> | <a href="https://github.com/Westlake-AGI-Lab/AppAgentX">Code</a>
     </div>
   </div>
 </div>
@@ -43,7 +43,7 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
       An innovative approach to developing AI agents capable of medical reasoning and diagnosis, exploring different architectural designs for optimal performance in healthcare scenarios.
     </p>
     <div style="margin-top: 15px;">
-      [PDF](https://arxiv.org/abs/2504.11301)
+      <a href="https://arxiv.org/abs/2504.11301">PDF</a>
     </div>
   </div>
 </div>
@@ -51,9 +51,11 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
 # Current Research
 
 - ACGs: Agents Can Generate SQL by Querying Trees Like Expert
+
   Designed a novel framework to enhance the accuracy of LLM-based agents in complex NL2SQL tasks for enterprise scenarios. Simulated human data scientists’ database exploration via Monte Carlo search, leveraging the discovered structural information to guide SQL generation for challenging queries. Preliminary evaluation on benchmarks such as Spider 2.0 shows promising results.
 
 - Paper2Beamer
+
   Developed a system leveraging an LLM-based agent to convert academic papers into presentation slides. Investigated interactive slide modification with humans in the loop, drawing on concepts from human-computer interaction and educational theory.
 
 # Skills
