@@ -10,7 +10,6 @@ redirect_from:
 Hi, I'm Wenjia Jiang, currently a Research Engineer at Singapore Management University, advised by [David Lo](http://www.mysmu.edu/faculty/davidlo/). I received my Bachelor’s degree in software engineering from the School of Software, Henan University of China.
 
 My current research interests lie in large language models (LLMs), multimodal learning, and artificial intelligence. I am particularly interested in developing LLM-based agents.
-[Download my CV](files/CV_Wenjia_Jiang.pdf)
 
 # News
 
@@ -57,14 +56,10 @@ My current research interests lie in large language models (LLMs), multimodal le
   <div style="flex: 1;">
     <h3 style="margin-top: 0; color: #2c3e50;">SQLAgent: Learning to Explore Before Generating as a Data Engineer</h3>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
-      Wenjia Jiang, Yiwei Wang, Boyan Han, Joey Tianyi Zhou, Chi Zhang<br>
-      <em>arXiv preprint arXiv:2602.01952</em>
-    </p>
-    <p style="margin: 10px 0; line-height: 1.6; color: #555;">
       A novel two-stage LLM-based framework that decouples knowledge acquisition from query generation to handle complex, multi-step SQL reasoning in realistic databases.
     </p>
     <div>
-      <a href="https://arxiv.org/abs/2602.01952">PDF</a>
+      <a href="https://arxiv.org/pdf/2602.01952.pdf">PDF</a>
     </div>
   </div>
 </div>
@@ -76,14 +71,10 @@ My current research interests lie in large language models (LLMs), multimodal le
   <div style="flex: 1;">
     <h3 style="margin-top: 0; color: #2c3e50;">Auto-Slides: An Interactive Multi-Agent System for Creating and Customizing Research Presentations</h3>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
-      Yuheng Yang, Wenjia Jiang, Yang Wang, Yiwei Wang, Chi Zhang<br>
-      <em>arXiv preprint arXiv:2509.11062</em>
-    </p>
-    <p style="margin: 10px 0; line-height: 1.6; color: #555;">
       An LLM-driven multi-agent system that converts research papers into pedagogically structured, multimodal slides with an interactive editor for personalized learning.
     </p>
     <div>
-      <a href="https://arxiv.org/abs/2509.11062">PDF</a>
+      <a href="https://auto-slides.github.io/">Project Page</a> | <a href="https://arxiv.org/pdf/2509.11062.pdf">PDF</a> | <a href="https://github.com/Westlake-AGI-Lab/Auto-Slides">Code</a> <img src="https://img.shields.io/github/stars/Westlake-AGI-Lab/Auto-Slides?style=social" alt="GitHub stars" style="vertical-align: middle;">
     </div>
   </div>
 </div>
