@@ -7,10 +7,15 @@ redirect_from:
   - /about.html
 ---
 
-Hi, I'm Wenjia Jiang, currently a research assistant at AGI Lab, Westlake University, advised by [Prof. Chi Zhang](https://icoz69.github.io/). I received my Bachelor’s degree in software engineering from the School of Software, Henan University of China.
+Hi, I'm Wenjia Jiang, currently a Research Engineer at Singapore Management University, advised by [David Lo](http://www.mysmu.edu/faculty/davidlo/). I received my Bachelor’s degree in software engineering from the School of Software, Henan University of China.
 
-I am applying to Ph.D programs this year (26 fall). My current research interests lie in large language models (LLMs), multimodal learning, and artificial intelligence. I am particularly interested in developing LLM-based agents.
+My current research interests lie in large language models (LLMs), multimodal learning, and artificial intelligence. I am particularly interested in developing LLM-based agents.
 [Download my CV](files/CV_Wenjia_Jiang.pdf)
+
+# News
+
+- 🎉 **[2026 Fall]** I will join the University of Alberta to pursue my Ph.D. under the supervision of [Prof. Zhouyang](https://homepage.zhouyang.me/).
+
 
 # Selected Research Projects
 
@@ -45,15 +50,43 @@ I am applying to Ph.D programs this year (26 fall). My current research interest
   </div>
 </div>
 
-# Current Research
+<div style="display: flex; align-items: flex-start; margin-bottom: 30px; gap: 20px;">
+  <div style="flex-shrink: 0; width: 180px;">
+    <img src="images/paper_image/sqlagent.png" alt="SQLAgent Project" style="width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  </div>
+  <div style="flex: 1;">
+    <h3 style="margin-top: 0; color: #2c3e50;">SQLAgent: Learning to Explore Before Generating as a Data Engineer</h3>
+    <p style="margin: 10px 0; line-height: 1.6; color: #555;">
+      Wenjia Jiang, Yiwei Wang, Boyan Han, Joey Tianyi Zhou, Chi Zhang<br>
+      <em>arXiv preprint arXiv:2602.01952</em>
+    </p>
+    <p style="margin: 10px 0; line-height: 1.6; color: #555;">
+      A novel two-stage LLM-based framework that decouples knowledge acquisition from query generation to handle complex, multi-step SQL reasoning in realistic databases.
+    </p>
+    <div>
+      <a href="https://arxiv.org/abs/2602.01952">PDF</a>
+    </div>
+  </div>
+</div>
 
-**ACGs: Agents Can Generate SQL by Querying Trees Like Expert**
-
-Supervised jointly by [Prof. Chi Zhang](https://icoz69.github.io/) and [Prof. Yiwei Wang](https://wangywust.github.io/) (University of California, Merced). Designed a novel framework to enhance the accuracy of LLM-based agents in complex NL2SQL tasks for enterprise scenarios. Simulated human data scientists' database exploration via Monte Carlo search, leveraging the discovered structural information to guide SQL generation for challenging queries. Preliminary evaluation on benchmarks such as **Spider 2.0** shows promising results. (_📝 Under review at ICLR 2026_)
-
-**Paper2Beamer**
-
-Developed a system leveraging an LLM-based agent to convert academic papers into presentation slides. Investigated interactive slide modification with humans in the loop, drawing on concepts from **human-computer interaction** and **educational theory**. (_📝 Under review at CHI 2026_)
+<div style="display: flex; align-items: flex-start; margin-bottom: 30px; gap: 20px;">
+  <div style="flex-shrink: 0; width: 180px;">
+    <img src="images/paper_image/autoslides.png" alt="Auto-Slides Project" style="width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  </div>
+  <div style="flex: 1;">
+    <h3 style="margin-top: 0; color: #2c3e50;">Auto-Slides: An Interactive Multi-Agent System for Creating and Customizing Research Presentations</h3>
+    <p style="margin: 10px 0; line-height: 1.6; color: #555;">
+      Yuheng Yang, Wenjia Jiang, Yang Wang, Yiwei Wang, Chi Zhang<br>
+      <em>arXiv preprint arXiv:2509.11062</em>
+    </p>
+    <p style="margin: 10px 0; line-height: 1.6; color: #555;">
+      An LLM-driven multi-agent system that converts research papers into pedagogically structured, multimodal slides with an interactive editor for personalized learning.
+    </p>
+    <div>
+      <a href="https://arxiv.org/abs/2509.11062">PDF</a>
+    </div>
+  </div>
+</div>
 
 # Skills
 
