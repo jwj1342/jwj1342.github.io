@@ -56,6 +56,7 @@ My current research interests lie in large language models (LLMs), multimodal le
   <div style="flex: 1;">
     <h3 style="margin-top: 0; color: #2c3e50;">SQLAgent: Learning to Explore Before Generating as a Data Engineer</h3>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
+      <strong style="color: #27ae60;">Accepted by ACL 2026 Findings</strong><br>
       A novel two-stage LLM-based framework that decouples knowledge acquisition from query generation to handle complex, multi-step SQL reasoning in realistic databases.
     </p>
     <div>
@@ -71,6 +72,7 @@ My current research interests lie in large language models (LLMs), multimodal le
   <div style="flex: 1;">
     <h3 style="margin-top: 0; color: #2c3e50;">Auto-Slides: An Interactive Multi-Agent System for Creating and Customizing Research Presentations</h3>
     <p style="margin: 10px 0; line-height: 1.6; color: #555;">
+      <strong style="color: #27ae60;">Accepted by ICME 2026</strong><br>
       An LLM-driven multi-agent system that converts research papers into pedagogically structured, multimodal slides with an interactive editor for personalized learning.
     </p>
     <div>
@@ -83,12 +85,6 @@ My current research interests lie in large language models (LLMs), multimodal le
 
 - Language: English (IELTS 6.5)
 
-- LLM Applications: Skilled in developing applications with LangChain and Camel AI, prompt engineering, integrating OpenAI API, and building Retrieval-Augmented Generation (RAG) systems.
-
-- Data & Storage: Experienced with vector databases, graph databases, and data formats such as JSON and HDF5 for efficient data management and retrieval.
-
-- Deep Learning: Proficient in PyTorch, Transformer architectures, and Computer Vision tasks; hands-on experience with model training, fine-tuning, and deployment.
-
-- Tools & DevOps: Proficient with Git, Docker, FastAPI, Jupyter, and Hugging Face ecosystem for collaborative development, deployment, and experimentation.
+- AI Coding Tools: Power user of Codex, Claude Code, Cursor, and frontier LLMs (~150M tokens/month)
 
 - Professional Software: LaTeX, SPSS.
