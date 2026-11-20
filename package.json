@@ -18,6 +18,7 @@
     "model:mirror": "node scripts/mirror-model.mjs",
     "db:migrate": "wrangler d1 migrations apply wenjia-me --remote",
     "logs:views": "wrangler d1 execute wenjia-me --remote --command \"SELECT * FROM page_views LIMIT 50\"",
+    "logs:export": "wrangler d1 export wenjia-me --remote --output=logs-backup.sql",
     "logs:chat": "wrangler d1 execute wenjia-me --remote --command \"SELECT * FROM chat_log LIMIT 50\""
   },
   "dependencies": {

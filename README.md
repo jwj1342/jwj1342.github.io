@@ -115,9 +115,28 @@ its answer. It is all stored in the D1 database `wenjia-me`; nothing goes to ano
 company, no cookie is set and no IP address is kept. The location is the city that
 Cloudflare reports for the request.
 
-`/api/*` accepts requests only from the site's own pages and at most 60 a minute from one
+`/api/*` accepts requests only from the site's own pages, and about 60 a minute from one
 visitor (the `ratelimits` entry in `wrangler.jsonc`); beyond that it answers 429 and
-records nothing.
+records nothing. Cloudflare enforces that limit loosely, so it slows a flood down rather
+than stopping it.
+
+### When the log needs attention
+
+Once a day (09:00 in Beijing) the Worker checks the database, and emails the address in
+`src/data/site.ts` if it is more than 80% full (the free plan allows 500 MB) or if more
+than 5,000 log lines were written in the last 24 hours. The thresholds are at the top of
+the daily check in `worker/index.ts`. When that email arrives:
+
+```bash
+npm run logs:export     # save everything to logs-backup.sql (not committed)
+npx wrangler d1 execute wenjia-me --remote --command "DELETE FROM events WHERE ts < '2026-01-01'"   # then delete what is older than a date
+```
+
+If the free plan's daily write limit (100,000 rows) is ever reached, nothing more is
+logged until 00:00 UTC; the site itself is not affected.
+
+The email is sent with Cloudflare Email Service: wenjia.me must be onboarded there and
+the recipient address verified (dashboard: Compute > Email Service > Email Routing).
 
 | Table | What is in it |
 | --- | --- |

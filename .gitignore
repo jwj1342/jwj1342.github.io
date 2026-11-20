@@ -6,6 +6,8 @@ dist/
 .env
 .env.*
 .dev.vars
+# exported visitor log (npm run logs:export): visitors' questions, never committed
+logs-backup*.sql
 # local photo originals, never committed
 photos-inbox/
 .photos-preview/

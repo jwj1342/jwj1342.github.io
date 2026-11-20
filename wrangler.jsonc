@@ -29,10 +29,17 @@
       "migrations_dir": "migrations"
     }
   ],
-  // At most this many /api/* requests a minute from one visitor (counted by IP address,
-  // separately in each Cloudflare location); more are answered with 429. A real visit
-  // makes two or three per page. `namespace_id` only has to be a number of our choosing.
+  // About this many /api/* requests a minute from one visitor (counted by IP address);
+  // more are answered with 429. A real visit makes two or three per page. Cloudflare
+  // enforces it loosely: each of its machines counts by itself, so a flood is slowed
+  // down, not stopped. `namespace_id` only has to be a number of our choosing.
   "ratelimits": [{ "name": "API_LIMIT", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } }],
+  // Once a day, at 01:00 UTC (09:00 in Beijing), the Worker checks how full the visitor
+  // log is and emails a warning if it needs attention (dailyCheck in worker/index.ts).
+  "triggers": { "crons": ["0 1 * * *"] },
+  // Lets the Worker send that email, from an address on wenjia.me. The domain must be
+  // onboarded to Cloudflare Email Service and the recipient verified there.
+  "send_email": [{ "name": "EMAIL" }],
   // Keeps the Worker's own log lines (errors) readable in the dashboard.
   "observability": { "enabled": true }
 }
