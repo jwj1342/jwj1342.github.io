@@ -140,7 +140,16 @@
   border-bottom: 1px solid var(--line);
   padding: 0.5em 0.9em 0.5em 0;
   text-align: left;
+  vertical-align: top;
+  line-height: 1.5;
+}
+/* headers and the first column stay on one line; longer cells wrap */
+.prose th,
+.prose td:first-child {
   white-space: nowrap;
+}
+.prose td:not(:first-child) {
+  min-width: 9em;
 }
 .prose th {
   font-weight: 600;

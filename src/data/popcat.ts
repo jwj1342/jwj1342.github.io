@@ -1,5 +1,5 @@
 /**
- * Pop Cat: the chat assistant in the bottom-right corner. It is a small language model
+ * Pop Cat: the chat assistant in the bottom-left corner. It is a small language model
  * that runs entirely in the visitor's browser (WebLLM on WebGPU): no AI server, no API key.
  * The questions visitors ask and the answers are logged (src/scripts/track.ts), and the
  * chat panel says so.

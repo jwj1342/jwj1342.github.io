@@ -90,7 +90,7 @@ Uploading needs `npx wrangler login` once.
 
 ### Pop Cat
 
-The cat in the bottom-right corner opens a chat with a small language model that runs in
+The cat in the bottom-left corner opens a chat with a small language model that runs in
 the visitor's own browser (WebLLM on WebGPU). There is no AI server and no API key; the
 questions and answers are written to the visitor log (the chat panel says so). Nothing
 is downloaded until the visitor sends a first question; the weights (about 430 MB) then
