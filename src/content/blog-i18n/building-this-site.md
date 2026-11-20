@@ -4,7 +4,7 @@ description: "From a Jekyll template to Astro and Cloudflare, with the reasons f
 lang: en
 # Translated by Claude, not by scripts/translate.mjs. `npm run translate` will redo it when
 # the Chinese post changes; add "locked: true" to keep this version instead.
-sourceHash: 138edd9c3154af29
+sourceHash: b45952076a9d2af4
 model: "claude"
 ---
 
@@ -164,6 +164,52 @@ The first was this. I finished redrawing, opened the page, and the globe had bec
 
 The second was better hidden. Zoom in four times and out four times and you should be back where you started, yet the zoom-out button did not turn grey. The reason is that each step multiplies or divides by 1.6, and after the round trip a floating-point number is not exactly 1 but the tiniest bit more, so the program solemnly concluded that there was still room to zoom out.
 
+## An achievements board modelled on Minecraft
+
+The thing on the Misc page that took the most care is in fact the board of life achievements. I like playing Minecraft, so it is modelled on the game's advancements screen. A main line runs from top to bottom through each stage of life, the achievements unlocked in a stage branch off to the side, the locked ones are grey, and those marked secret show nothing but three question marks.
+
+Some of the source code for this part borrows from a project by my good friend He Geng, and I would like to thank him here.
+
+What pixel art fears most is blur. Let a single edge miss the pixel grid, or let a little rounding or a gradient creep in somewhere, and the flavour is gone at once. So the whole board recognises one unit only. One pixel is set to 3px, and outlines, highlights and shadows, and the wires between achievements are all whole multiples of it. The raised look of a tile is not a texture either. It is three layers of box-shadow stacked up, a dark outline on the outside, a bright edge inside the top left and a dark edge inside the bottom right, and together they look like a block standing proud of the surface.
+
+```css
+.tile {
+  box-shadow:
+    0 0 0 var(--px) var(--outline),
+    inset var(--px) var(--px) 0 rgba(255, 255, 255, 0.45),
+    inset calc(-1 * var(--px)) calc(-1 * var(--px)) 0 rgba(0, 0, 0, 0.3);
+}
+```
+
+We drew the icons square by square and used no assets from the game. Each icon is a 14 by 14 grid, which in the code is simply 14 strings, with one character per pixel, a dot for transparent, and a letter that is looked up in a palette. The pickaxe below is the badge at the top left of the board.
+
+```ts
+pickaxe: [
+  '..............',
+  '...kkkkkkk....',
+  '..kSSSSSSSk...',
+  '.kSsskkkksSk..',
+  '.kskk..kWksSk.',
+  '..k...kWwkksk.',
+  '.....kWwk..kk.',
+  '....kWwk......',
+  '...kWwk.......',
+  '..kWwk........',
+  '.kWwk.........',
+  '.kwk..........',
+  '..k...........',
+  '..............',
+],
+```
+
+The palette has 14 colours in all, and each material takes a pair of letters, lower case for the dark side and upper case for the light side. `w` and `W` are wood, `s` and `S` are stone and iron, `g` and `G` are gold. Recolouring an icon means changing letters, and drawing a new one means filling in one more grid. At build time these strings are turned into small squares in an SVG, with neighbouring pixels of the same colour in a row merged into one rectangle first, so the icons are tiny and their edges stay hard at any size. There are 13 of them so far, among them a pickaxe, an axe, a sword, a book, a gem and a star.
+
+The background of the board looks like a dirt texture, but it is not an image either. It is a 12 by 12 pixel texture computed at build time from a fixed random seed, picking from six earth colours and then tiled. The seed is fixed, which is why it comes out identical on every build.
+
+The experience bar keeps to the rules of the game as well. Each unlocked achievement adds 100 experience by default, level 2 takes 200, every level after that takes 100 more than the last, and the bar is cut into 18 segments. The lettering on the board is the pixel font mentioned earlier, with the level and experience numbers as the only exception, for the reason already given, that in a pixel font a 5 looks too much like an S.
+
+One more thing sets it apart from the rest of the site. The board does not follow the light and dark themes. It has a fixed set of colours of its own, like a small game window set into the page.
+
 ## Why move to Cloudflare and not stay on GitHub Pages
 
 To be honest, GitHub Pages is rather good. It is free and carefree, a push puts it live, and the old site had always lived there. The trouble is that it could not catch a single one of the things the new site wants to do.
@@ -278,8 +324,6 @@ The star and citation counts next to papers are grabbed from GitHub and OpenAlex
 Styles on old phones caught me out once as well. The build tool by default rewrites media queries into a newer syntax, which Safari before 16.4 does not recognise, and what it does not recognise it throws away, whole rule and all. The fix is simple enough, which is to tell the build tool that the CSS it puts out has to be readable by old browsers too.
 
 Photos do not go into Git. Adding photos takes one command, and the script makes a thumbnail and a large view, wipes the location data from the photo, sends both to R2, and notes the size and main colour in a JSON file. The main colour is kept so that a patch of it can fill the photo's place before the image has loaded.
-
-The background of the achievements board looks like a texture image, but it is not an image. It is a pixel texture computed at build time from a fixed random seed, which is why it comes out identical on every build.
 
 ## In closing
 
