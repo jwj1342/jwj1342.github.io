@@ -105,6 +105,12 @@ To try a model without copying or editing anything, open a page with
 
 ## Deploy
 
+Pushing to `master` on GitHub deploys the site: Cloudflare (Workers Builds, set up on the
+Worker under Settings > Builds) checks out the commit, runs `npm run build`, then
+`npx wrangler deploy`. The Node version it builds with is the one in `.nvmrc`.
+
+To deploy from your own computer instead, without waiting for a push:
+
 ```bash
 npm run deploy     # astro build && wrangler deploy
 ```
@@ -121,3 +127,7 @@ and open `https://try-wenjia-me.<account>.workers.dev`. `www.wenjia.me` is redir
 
 Old Jekyll URLs are redirected by `public/_redirects`. The previous Jekyll site is kept on
 the `legacy-jekyll` branch.
+
+The old address https://jwj1342.github.io is served by GitHub Pages from the
+`github-pages-redirect` branch, which holds only two pages that send visitors to the same
+address on wenjia.me.
