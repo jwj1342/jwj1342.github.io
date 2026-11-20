@@ -14,16 +14,6 @@
       "port": 4321
     },
     {
-      "name": "mockups",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "-m",
-        "http.server",
-        "4173"
-      ],
-      "port": 4173
-    },
-    {
       "name": "worker",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
