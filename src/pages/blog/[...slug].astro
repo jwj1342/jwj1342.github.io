@@ -95,6 +95,12 @@ const titles = (p: typeof post) => ({ orig: p.data.lang, title: p.data.title, tr
   </article>
 </Base>
 
+<script>
+  // Diagrams: the Mermaid library is fetched only by posts that have a ```mermaid block.
+  const diagrams = [...document.querySelectorAll<HTMLElement>('.prose pre[data-language="mermaid"]')];
+  if (diagrams.length) void import('../../scripts/mermaid-blocks').then((m) => m.start(diagrams));
+</script>
+
 <style>
   .post-head {
     max-width: var(--prose);

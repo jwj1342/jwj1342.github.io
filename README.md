@@ -49,6 +49,12 @@ draft: true     # visible in `npm run dev` only; remove to publish
 Markdown here. Code blocks, tables and LaTeX math ($inline$ and $$display$$) work.
 ```
 
+A code block marked `mermaid` is drawn as a diagram (flowcharts and the like, in the
+site's colours; see `src/scripts/mermaid-blocks.ts`). Raw HTML works too, and two small
+helpers are styled in `src/styles/prose.css`: `<div class="swatches">` for a row of colour
+chips and `<div class="specimen">` for typeface samples. `building-this-site.md` uses all
+three.
+
 ### Translate posts (中文 ↔ English)
 
 Write each post once, in either language, and set `lang: zh` or `lang: en`. Then run:

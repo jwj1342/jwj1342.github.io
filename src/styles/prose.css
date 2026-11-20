@@ -156,3 +156,77 @@
 .prose .katex {
   font-size: 1.05em;
 }
+
+/* Diagrams drawn from ```mermaid blocks (src/scripts/mermaid-blocks.ts) */
+.prose .diagram {
+  margin-inline: 0;
+  padding: 1.1rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--bg);
+  overflow-x: auto;
+  text-align: center;
+}
+.prose .diagram svg {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* A row of colour chips, written in a post as raw HTML:
+   <div class="swatches"><span style="--c:#2f6260"><b>Name</b><code>#2f6260</code></span> ... </div> */
+.prose .swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(6.8rem, 1fr));
+  gap: 0.9rem 0.75rem;
+  font-family: var(--sans);
+  text-align: start;
+}
+.prose .swatches > span {
+  display: grid;
+  gap: 0.1rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+.prose .swatches > span::before {
+  content: '';
+  height: 3.4rem;
+  margin-bottom: 0.35rem;
+  border-radius: 0.5rem;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 14%, transparent);
+}
+.prose .swatches b {
+  font-weight: 600;
+}
+.prose .swatches code {
+  padding: 0;
+  background: none;
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+/* Typeface samples: <div class="specimen"><p style="font-family:var(--serif)"><small>Label</small>Sample text</p> ... </div> */
+.prose .specimen {
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.2rem 1.3rem;
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  background: var(--surface);
+  text-align: start;
+}
+.prose .specimen p {
+  margin: 0;
+  line-height: 1.3;
+}
+.prose .specimen small {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--muted);
+}

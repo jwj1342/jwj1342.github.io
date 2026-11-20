@@ -11,7 +11,7 @@ export const site = {
   /** `call` is how the link is written on the homepage, as an agent tool call. */
   links: [
     { label: 'Google Scholar', call: 'scholar.open()', href: 'https://scholar.google.com/citations?user=kljYVvoAAAAJ' },
-    { label: 'GitHub', call: 'github.open()', href: 'https://github.com/jwj1342' },
+    { label: 'GitHub', call: 'github.pull()', href: 'https://github.com/jwj1342' },
     { label: 'LinkedIn', call: 'linkedin.link()', href: 'https://www.linkedin.com/in/wenjia-jiang-223623260' },
   ],
   cv: '/files/CV_Wenjia_Jiang.pdf',

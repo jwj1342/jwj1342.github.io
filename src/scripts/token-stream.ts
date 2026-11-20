@@ -256,7 +256,7 @@ async function run() {
   const groups = targets.map((el) => ({ el, spans: wrapTokens(el) }));
   const allSpans = groups.flatMap((g) => g.spans);
   const sampler = createSampler(document.querySelector<HTMLElement>('[data-sampler]'));
-  // Each tool-call link starts out as raw model output, e.g. <github.open()/>, written
+  // Each tool-call link starts out as raw model output, e.g. <github.pull()/>, written
   // over the link; once its last token is generated the link is "rendered" as a button.
   const tools = [...document.querySelectorAll<HTMLElement>('[data-tool]')].map((el) => {
     const [object, ...rest] = (el.dataset.call ?? '').split('.');

@@ -32,6 +32,7 @@
     "@mlc-ai/web-llm": "^0.2.88",
     "astro": "^7.4.11",
     "katex": "^0.19.1",
+    "mermaid": "^12.3.0",
     "photoswipe": "^5.4.4",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"
