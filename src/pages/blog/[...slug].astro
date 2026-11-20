@@ -15,10 +15,20 @@ export async function getStaticPaths() {
   }));
 }
 const { post, translation, newer, older, translations } = Astro.props;
-const { Content } = await render(post);
-const Translated = translation ? (await render(translation)).Content : null;
+const rendered = await render(post);
+const renderedTr = translation ? await render(translation) : null;
+const { Content } = rendered;
+const Translated = renderedTr ? renderedTr.Content : null;
 const orig = post.data.lang;
 const other = orig === 'zh' ? 'en' : 'zh';
+
+// The table of contents beside the post on wide screens: its h2 and h3 headings, in each
+// language. A post with only a couple of headings goes without one.
+type Heading = { depth: number; slug: string; text: string };
+const sections = (headings: Heading[]) => headings.filter((h) => h.depth === 2 || h.depth === 3);
+const contents = sections(rendered.headings);
+const contentsTr = renderedTr ? sections(renderedTr.headings) : [];
+const hasToc = contents.length >= 3;
 
 // Both languages of a neighbouring post's title, for the pager.
 const titles = (p: typeof post) => ({ orig: p.data.lang, title: p.data.title, tr: translations.get(p.id) });
@@ -42,6 +52,7 @@ const titles = (p: typeof post) => ({ orig: p.data.lang, title: p.data.title, tr
       </p>
     </header>
 
+    <div class:list={['post-body', { 'with-toc': hasToc }]}>
     <div data-i18n data-orig={orig} data-single={!translation}>
       <div class="prose" data-l={orig} lang={htmlLang(orig)}>
         <Content />
@@ -66,6 +77,32 @@ const titles = (p: typeof post) => ({ orig: p.data.lang, title: p.data.title, tr
           </div>
         )
       }
+    </div>
+    {
+      hasToc && (
+        <nav class="toc" aria-label="On this page" data-toc>
+          <p class="toc-title">On this page</p>
+          <div data-i18n data-orig={orig} data-single={!translation}>
+            <ol data-l={orig} lang={htmlLang(orig)}>
+              {contents.map((h) => (
+                <li class:list={{ sub: h.depth === 3 }}>
+                  <a href={`#${h.slug}`}>{h.text}</a>
+                </li>
+              ))}
+            </ol>
+            {translation && (
+              <ol data-l={other} lang={htmlLang(other)}>
+                {contentsTr.map((h) => (
+                  <li class:list={{ sub: h.depth === 3 }}>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        </nav>
+      )
+    }
     </div>
 
     {
@@ -98,6 +135,44 @@ const titles = (p: typeof post) => ({ orig: p.data.lang, title: p.data.title, tr
   // Diagrams: the Mermaid library is fetched only by posts that have a ```mermaid block.
   const diagrams = [...document.querySelectorAll<HTMLElement>('.prose pre[data-language="mermaid"]')];
   if (diagrams.length) void import('../../scripts/mermaid-blocks').then((m) => m.start(diagrams));
+
+  // Table of contents: mark the section being read. Only the links that are on screen
+  // count (the other language's list is hidden, and so is the whole thing on a narrow page).
+  const toc = document.querySelector<HTMLElement>('[data-toc]');
+  if (toc) {
+    const links = [...toc.querySelectorAll<HTMLAnchorElement>('a')];
+    let waiting = false;
+    const mark = () => {
+      waiting = false;
+      const shown = links.filter((a) => a.offsetParent);
+      let current: HTMLAnchorElement | undefined;
+      for (const a of shown) {
+        const heading = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+        // a section starts being "read" when its heading has come up under the header
+        if (heading && heading.getBoundingClientRect().top <= 130) current = a;
+      }
+      // at the very bottom the last sections may be too short to reach the top
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) current = shown[shown.length - 1];
+      for (const a of links) {
+        if (a === current) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      }
+    };
+    addEventListener(
+      'scroll',
+      () => {
+        if (!waiting) {
+          waiting = true;
+          requestAnimationFrame(mark);
+        }
+      },
+      { passive: true },
+    );
+    addEventListener('resize', mark);
+    // the reader switched language: the other list is showing now
+    new MutationObserver(mark).observe(document.documentElement, { attributes: true, attributeFilter: ['data-blog-lang'] });
+    mark();
+  }
 </script>
 
 <style>
@@ -153,6 +228,63 @@ const titles = (p: typeof post) => ({ orig: p.data.lang, title: p.data.title, tr
     font-size: 0.82em;
     letter-spacing: 0;
     line-height: 1.3;
+  }
+  /* On a wide screen the text keeps its comfortable line length and the space to its
+     right holds a table of contents; on anything narrower the contents are left out. */
+  .toc {
+    display: none;
+  }
+  @media (min-width: 68rem) {
+    .post-body.with-toc {
+      display: grid;
+      grid-template-columns: minmax(0, var(--prose)) minmax(0, 1fr);
+      column-gap: clamp(2.5rem, 5vw, 4.5rem);
+      align-items: start;
+    }
+    .toc {
+      display: block;
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+      max-height: calc(100vh - var(--header-h) - 4rem);
+      overflow-y: auto;
+      justify-self: end;
+      width: min(100%, 15rem);
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+  }
+  .toc-title {
+    margin: 0 0 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--line);
+  }
+  .toc a {
+    display: block;
+    margin-left: -1px;
+    padding: 0.32rem 0 0.32rem 0.9rem;
+    border-left: 1px solid transparent;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .toc .sub a {
+    padding-left: 1.7rem;
+    font-size: 0.8rem;
+  }
+  .toc a:hover {
+    color: var(--ink);
+  }
+  .toc a[aria-current='true'] {
+    color: var(--ink);
+    border-left-color: var(--accent);
   }
   .meta {
     display: flex;
