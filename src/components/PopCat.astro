@@ -69,6 +69,7 @@ const opened = picture('open');
         <svg class="pc-i-stop" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="4" y="4" width="8" height="8" rx="1.5" fill="currentColor"></rect></svg>
       </button>
     </form>
+    <p class="pc-note">The model runs in your browser. Questions and answers are logged anonymously.</p>
   </section>
 
   <button class="pc-btn" type="button" aria-expanded="false" aria-controls="popcat-panel" aria-label="Chat with Pop Cat, a small AI model that runs in your browser">
@@ -497,6 +498,14 @@ const opened = picture('open');
     gap: 0.5rem;
     padding: 0.6rem;
     border-top: 1px solid var(--line);
+  }
+  /* said plainly, since the model itself is local: what is typed here is kept (src/scripts/track.ts) */
+  .pc-note {
+    margin: 0;
+    padding: 0 0.75rem 0.55rem;
+    font-size: 0.68rem;
+    line-height: 1.35;
+    color: var(--muted);
   }
   .pc-form textarea:disabled,
   .pc-form button:disabled {

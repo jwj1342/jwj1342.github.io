@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import HomeSection from '../components/HomeSection.astro';
 import PubLinks from '../components/PubLinks.astro';
 import Career from '../components/Career.astro';
+import VisitorMap from '../components/VisitorMap.astro';
 import profile from '../assets/profile.jpg';
 import { site } from '../data/site';
 
@@ -143,6 +144,10 @@ const featured = (await getCollection('publications', ({ data }) => data.feature
 
     <HomeSection title="Career" id="career">
       <Career />
+    </HomeSection>
+
+    <HomeSection title="Visitors" id="visitors">
+      <VisitorMap />
     </HomeSection>
   </div>
 </Base>

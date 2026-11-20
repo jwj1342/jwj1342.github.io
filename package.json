@@ -15,7 +15,10 @@
     "translate": "node scripts/translate.mjs",
     "photos:add": "node scripts/photos.mjs",
     "photos:remove": "node scripts/photos.mjs --remove",
-    "model:mirror": "node scripts/mirror-model.mjs"
+    "model:mirror": "node scripts/mirror-model.mjs",
+    "db:migrate": "wrangler d1 migrations apply wenjia-me --remote",
+    "logs:views": "wrangler d1 execute wenjia-me --remote --command \"SELECT * FROM page_views LIMIT 50\"",
+    "logs:chat": "wrangler d1 execute wenjia-me --remote --command \"SELECT * FROM chat_log LIMIT 50\""
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.8",

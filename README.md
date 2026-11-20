@@ -2,6 +2,8 @@
 
 Personal site of Wenjia Jiang: homepage, publications, blog and photo wall.
 Built with [Astro](https://astro.build), deployed to Cloudflare Workers as static assets.
+The only server-side code is a small Worker behind `/api/*` (`worker/index.ts`) that keeps
+the visitor log in a D1 database.
 
 ## Develop
 
@@ -26,6 +28,7 @@ Requires Node 22.12 or newer.
 | Career timeline (homepage) | `src/data/career.ts` |
 | Life achievements (Misc) | `src/data/achievements.ts`; icons in `src/data/pixel-icons.ts` |
 | Footprints globe (Misc) | `src/data/footprints.ts`: one entry per place (name, coordinates, year, kind, note, optional photo) |
+| Visitor map (homepage) | drawn from the visitor log; nothing to edit. See "Visitors and logs" below |
 | Pop Cat (chat in the corner) | `src/data/popcat.ts`: model, one-tap questions, extra facts, pronouns |
 | CV | `public/files/CV_Wenjia_Jiang.pdf` (keep the file name; it is linked from outside) |
 
@@ -83,7 +86,8 @@ Uploading needs `npx wrangler login` once.
 ### Pop Cat
 
 The cat in the bottom-right corner opens a chat with a small language model that runs in
-the visitor's own browser (WebLLM on WebGPU). There is no server and no API key. Nothing
+the visitor's own browser (WebLLM on WebGPU). There is no AI server and no API key; the
+questions and answers are written to the visitor log (the chat panel says so). Nothing
 is downloaded until the visitor sends a first question; the weights (about 430 MB) then
 come from our own R2 bucket at `models.wenjia.me` and stay in that browser's cache, so
 each visitor downloads them once. Phones and tablets can be given a different model
@@ -102,6 +106,45 @@ npm run model:mirror -- <model id> <fallback model id>
 
 To try a model without copying or editing anything, open a page with
 `?popcat-model=<WebLLM model id>` added to its address (it is then fetched from Hugging Face).
+
+## Visitors and logs
+
+Every page reports to the site's own server that it was opened (`src/scripts/track.ts`
+sends to `/api/log`, handled by `worker/index.ts`), and Pop Cat reports each question and
+its answer. It is all stored in the D1 database `wenjia-me`; nothing goes to another
+company, no cookie is set and no IP address is kept. The location is the city that
+Cloudflare reports for the request.
+
+| Table | What is in it |
+| --- | --- |
+| `page_views` | time (UTC), city, country, page, seconds on screen, where the visitor came from, phone or desktop, browser language, session |
+| `chat_log` | time, city, country, question, answer, page, model, session |
+| `places` | one row per city with its number of visits; the homepage map is drawn from this |
+
+`session` is a random id that lasts as long as one browser tab: rows with the same
+session are one visit, so sorting by time shows the path a visitor took.
+
+To read the log, open the Cloudflare dashboard, go to Storage & databases > D1 >
+`wenjia-me`, and pick a table. Or from here:
+
+```bash
+npm run logs:views    # the 50 latest page views
+npm run logs:chat     # the 50 latest questions to Pop Cat
+npx wrangler d1 execute wenjia-me --remote --command "SELECT path, COUNT(*) AS views FROM page_views GROUP BY path ORDER BY views DESC"
+```
+
+To keep your own visits out of it, open any page once with `?track=off` added to its
+address, in each browser you use (`?track=on` undoes it).
+
+The tables are defined in `migrations/`. After adding a migration file there, run
+`npm run db:migrate` before pushing the code that needs it.
+
+To try the server-side part on your own computer (`npm run dev` does not run it):
+
+```bash
+npx wrangler d1 migrations apply wenjia-me --local   # once
+npm run build && npx wrangler dev                     # http://localhost:8787, with a local test database
+```
 
 ## Deploy
 

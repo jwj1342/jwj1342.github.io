@@ -10,8 +10,25 @@
   // Lets `npx wrangler versions upload --preview-alias <name>` publish a try-out copy at
   // <name>-wenjia-me.<account>.workers.dev without touching the live site.
   "preview_urls": true,
+  // The pages are static files in dist/. Only /api/* runs code (worker/index.ts): the
+  // visitor log and the data for the visitor map. Every other address is served straight
+  // from the files without starting the Worker.
+  "main": "worker/index.ts",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "404-page"
-  }
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  // Where the visitor log is kept. Tables are in migrations/ (`npm run db:migrate`).
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wenjia-me",
+      "database_id": "6c46c800-2e9e-4dd7-8de7-5f676d9a2567",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // Keeps the Worker's own log lines (errors) readable in the dashboard.
+  "observability": { "enabled": true }
 }

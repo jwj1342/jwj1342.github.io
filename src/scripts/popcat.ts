@@ -4,6 +4,7 @@
  * fetched (with the model's weights) only when the visitor sends their first question.
  */
 import { meow, oneParagraph, type Cries } from '../lib/meow';
+import { logAnswer, logChat } from './track';
 
 type Role = 'user' | 'assistant';
 interface Turn {
@@ -81,6 +82,8 @@ function init(root: HTMLElement) {
   let busy = false;
   let turnId = 0;
   let live: { el: HTMLElement; text: string } | null = null;
+  /** The newest question's id in the visitor log (the chat panel says that questions are logged). */
+  let logged: string | null = null;
   let progress: HTMLElement | null = null;
   let checked = false;
   let lastToken = 0;
@@ -463,6 +466,7 @@ function init(root: HTMLElement) {
     chips.hidden = true;
     addMessage('user', question);
     history.push({ role: 'user', content: question });
+    logged = logChat(question, modelId);
     setBusy(true);
     if (state === 'ready') generate();
     else void wake();
@@ -500,6 +504,8 @@ function init(root: HTMLElement) {
       const answer = live.text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
       if (answer) {
         history.push({ role: 'assistant', content: answer });
+        if (logged) logAnswer(logged, answer);
+        logged = null;
         live.el.innerHTML = format(live.text); // now that it is finished, the last sentence gets its meow
       } else live.el.textContent = '…';
       live = null;

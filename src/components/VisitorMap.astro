@@ -1,0 +1,69 @@
+---
+/**
+ * Where this site's visitors came from: a flat world map with a dot on every city, at
+ * the bottom of the homepage. The dots come from the site's own visitor log
+ * (/api/visitors, worker/index.ts); the map is drawn by src/scripts/visitor-map.ts,
+ * which is loaded only when the map is about to scroll into view.
+ */
+---
+
+<div class="vmap" data-visitor-map>
+  <canvas role="img" aria-label="World map of the cities this site's visitors came from"></canvas>
+  <p class="vm-line">
+    <span data-vm-count>&nbsp;</span>
+    <span class="vm-note">Counted on this site, without cookies; location is to the city.</span>
+  </p>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-visitor-map]');
+  if (root) {
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        watcher.disconnect();
+        void import('../scripts/visitor-map').then((m) => m.start(root));
+      },
+      { rootMargin: '600px' },
+    );
+    watcher.observe(root);
+  }
+</script>
+
+<style>
+  .vmap {
+    /* read by the script: the canvas cannot use CSS variables by itself */
+    --vm-land: #e1e9e6;
+    --vm-coast: #c3d0cd;
+    --vm-dot: var(--accent-2);
+  }
+  :global(:root[data-theme='dark']) .vmap {
+    --vm-land: #1a2c2b;
+    --vm-coast: #2c4442;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .vmap {
+      --vm-land: #1a2c2b;
+      --vm-coast: #2c4442;
+    }
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    /* the world from 84°N to 57°S in the Natural Earth projection (no Antarctica) */
+    aspect-ratio: 2.3;
+  }
+  .vm-line {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1.5rem;
+    margin: 0.9rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .vm-note {
+    font-family: var(--sans);
+  }
+</style>

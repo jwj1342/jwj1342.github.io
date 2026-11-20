@@ -36,7 +36,7 @@ export const footprints: Footprint[] = [
   { place: 'San Diego', country: 'United States', lat: 32.7157, lon: -117.1611, when: '2026', kind: 'conference', purpose: 'ACL 2026' },
   { place: 'Los Angeles', country: 'United States', lat: 34.0522, lon: -118.2437, when: '2026', kind: 'trip', purpose: 'Traveling' },
   { place: 'San Francisco', country: 'United States', lat: 37.7749, lon: -122.4194, when: '2026', kind: 'trip', purpose: 'Traveling' },
-  { place: 'Beijing', country: 'China', lat: 39.9042, lon: 116.4074, kind: 'base', purpose: 'Working' },
+  { place: 'Beijing', country: 'China', lat: 39.9042, lon: 116.4074, when: '2026', kind: 'base', purpose: 'Working' },
   { place: 'Hangzhou', country: 'China', lat: 30.2741, lon: 120.1551, when: '2024', kind: 'base', purpose: 'Studying' },
   { place: 'Kaifeng', country: 'China', lat: 34.7972, lon: 114.3076, when: '2021', kind: 'base', purpose: 'Studying' },
 ];
