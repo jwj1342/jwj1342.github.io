@@ -575,10 +575,18 @@ const countries = new Set(footprints.map((f) => f.country)).size;
     color: var(--muted);
     pointer-events: none;
   }
+  /* The list is never taller than the globe beside it: with many places it scrolls inside
+     itself instead of stretching the page (scripts/globe.ts keeps the picked row in view). */
   .places {
     list-style: none;
     margin: 0;
     padding: 0;
+    position: relative;
+    max-height: 26rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
   }
   .places li {
     border-top: 1px solid var(--line);

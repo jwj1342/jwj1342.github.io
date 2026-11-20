@@ -2,14 +2,35 @@
  * Life achievements, drawn on the Misc page as an advancement tree. This is a small
  * preview; the plan is a fuller, interactive version later.
  *
- * `story` is the main line, in order: each entry is a chapter (middle school, high
- * school, university, ...), and the achievements nested under it were unlocked from it.
- * `sideQuests` are moments that are not part of that line.
+ * The idea and part of the code are borrowed from He Geng's life-achievements
+ * (https://github.com/genghe02/life-achievements), with thanks.
  *
- * `done: false` shows the achievement as locked. A locked one with `secret: true`
- * hides its title and description until it is done.
+ * The achievements themselves are in achievements.json, next to this file, in the same
+ * shape as the tree on the page:
+ *
+ *   "story"       the main line, in order: each entry is a chapter (middle school, high
+ *                 school, university, ...), and the achievements unlocked from it are
+ *                 nested in its "children" (which may have children of their own)
+ *   "sideQuests"  moments that are not part of that line
+ *
+ * Each achievement has:
+ *
+ *   title, description   what is shown on the board
+ *   done                 true once unlocked; false shows it as locked
+ *   icon                 one of the pixel icons in pixel-icons.ts: pickaxe, axe, sword,
+ *                        book, gem, star, cap, cup, map, mic, note, news, scroll
+ *   when                 optional: the year it was unlocked
+ *   xp                   optional: the experience it is worth once unlocked (default 100)
+ *   secret               optional: true hides the title and description of a locked one
+ *   children             optional: achievements unlocked from this one
+ *
+ * A mistake in the file (a missing field, an icon that does not exist) stops the build
+ * and says which entry.
  */
-import type { PixelIcon } from './pixel-icons';
+import { z } from 'astro/zod';
+import { check } from '../lib/data';
+import { ICONS, type PixelIcon } from './pixel-icons';
+import data from './achievements.json';
 
 export interface Achievement {
   title: string;
@@ -25,125 +46,25 @@ export interface Achievement {
   children?: Achievement[];
 }
 
-export const story: Achievement[] = [
-  {
-    title: 'Hello, world',
-    description: 'Middle school: write a first program, in C.',
-    done: true,
-    icon: 'pickaxe',
-  },
-  {
-    title: 'Contestant',
-    description: 'High school: take up competitive programming for NOIP.',
-    done: true,
-    icon: 'sword',
-  },
-  {
-    title: 'Freshman',
-    description: 'Start a degree in software engineering at Henan University.',
-    when: '2021',
-    done: true,
-    icon: 'book',
-    children: [
-      {
-        title: 'Team lead',
-        description: 'National First Prize, Huawei Developer Contest.',
-        when: '2023',
-        xp: 150,
-        done: true,
-        icon: 'cup',
-      },
-      {
-        title: 'First preprint',
-        description: 'Put a first-author paper on arXiv.',
-        when: '2024',
-        done: true,
-        icon: 'scroll',
-        children: [
-          {
-            title: 'Six hundred stars',
-            description: 'An open-source project passes 600 stars on GitHub.',
-            when: '2025',
-            done: true,
-            icon: 'star',
-          },
-          {
-            title: 'Peer reviewed',
-            description: 'A first accepted paper, at ICME 2025.',
-            when: '2025',
-            done: true,
-            icon: 'axe',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: 'Graduate',
-    description: 'B.Eng., in the top 3% of the class.',
-    when: '2025',
-    xp: 200,
-    done: true,
-    icon: 'cap',
-    children: [
-      {
-        title: 'Main track',
-        description: 'A first-author paper in the EMNLP main conference.',
-        when: '2026',
-        xp: 200,
-        done: true,
-        icon: 'gem',
-        children: [
-          {
-            title: 'Budapest',
-            description: 'Travel to Budapest for EMNLP.',
-            when: '2026',
-            done: true,
-            icon: 'map',
-          },
-        ],
-      },
-      {
-        title: 'San Diego',
-        description: 'Travel to San Diego, USA, for ACL.',
-        when: '2026',
-        done: true,
-        icon: 'map',
-      },
-    ],
-  },
-  {
-    title: 'Doctor',
-    description: 'Finish a Ph.D.',
-    done: false,
-    icon: 'cap',
-  },
-];
+const icons = Object.keys(ICONS) as [PixelIcon, ...PixelIcon[]];
+const achievement: z.ZodType<Achievement> = z.lazy(() =>
+  z.object({
+    title: z.string().min(1),
+    description: z.string().min(1),
+    // a year may be written with or without quotes
+    when: z
+      .union([z.string(), z.number()])
+      .transform((value) => String(value))
+      .optional(),
+    xp: z.number().positive().optional(),
+    done: z.boolean(),
+    secret: z.boolean().optional(),
+    icon: z.enum(icons),
+    children: z.array(achievement).optional(),
+  }),
+);
 
-export const sideQuests: Achievement[] = [
-  {
-    title: 'In the news',
-    description: "Featured by Henan University's official WeChat account.",
-    done: true,
-    icon: 'news',
-  },
-  {
-    title: 'On stage',
-    description: 'Invited to give a talk.',
-    done: true,
-    icon: 'mic',
-  },
-  {
-    title: 'First concert',
-    description: 'See a live concert for the first time.',
-    done: true,
-    icon: 'note',
-  },
-  {
-    title: 'Secret',
-    description: 'Not unlocked yet.',
-    done: false,
-    secret: true,
-    icon: 'gem',
-  },
-];
+const board = check(z.object({ story: z.array(achievement), sideQuests: z.array(achievement) }), data, 'src/data/achievements.json');
+
+export const story: Achievement[] = board.story;
+export const sideQuests: Achievement[] = board.sideQuests;

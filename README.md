@@ -26,8 +26,8 @@ Requires Node 22.12 or newer.
 | Blog posts | `src/content/blog/*.md` or `.mdx` |
 | Misc page | `src/content/pages/misc.md` (plain Markdown) |
 | Career timeline (homepage) | `src/data/career.ts` |
-| Life achievements (Misc) | `src/data/achievements.ts`; icons in `src/data/pixel-icons.ts` |
-| Footprints globe (Misc) | `src/data/footprints.ts`: one entry per place (name, coordinates, year, kind, note, optional photo) |
+| Life achievements (Misc) | `src/data/achievements.json`; icons in `src/data/pixel-icons.ts` |
+| Footprints globe (Misc) | `src/data/footprints.json`: one line per place |
 | Visitor map (homepage) | drawn from the visitor log; nothing to edit. See "Visitors and logs" below |
 | Pop Cat (chat in the corner) | `src/data/popcat.ts`: model, one-tap questions, extra facts, pronouns |
 | CV | `public/files/CV_Wenjia_Jiang.pdf` (keep the file name; it is linked from outside) |
@@ -72,6 +72,42 @@ in its own language.
 Translations are plain Markdown: review them, fix anything that reads badly, and commit.
 Add `locked: true` to a translation's front matter to stop the script from overwriting
 your edits when the source post changes.
+
+### Footprints and achievements
+
+Both are plain JSON files; no code needs to be touched. The build checks them, and a
+mistake (a missing field, a kind or icon that does not exist) stops it with a message
+that names the entry.
+
+A place on the globe is one line in `src/data/footprints.json`, newest first:
+
+```json
+{"place": "Singapore", "country": "Singapore", "lat": 1.3521, "lon": 103.8198, "when": "2026", "kind": "base", "purpose": "Working"}
+```
+
+`kind` is `conference`, `base` (lived, studied or worked) or `trip`; `when` and `photo`
+are optional. Look the coordinates up on any map (north and east are positive). The list
+beside the globe scrolls inside itself once it is taller than the globe.
+
+`src/data/achievements.json` has the same shape as the board: `story` is the main line
+and `sideQuests` the rest, and achievements unlocked from another are nested in its
+`children`.
+
+```json
+{
+  "title": "First preprint",
+  "description": "Put a first-author paper on arXiv.",
+  "when": "2024",
+  "done": true,
+  "icon": "scroll",
+  "children": []
+}
+```
+
+`done: false` shows it as locked; `secret: true` hides a locked one's text; `xp` is what
+it is worth (100 if left out). `icon` is one of pickaxe, axe, sword, book, gem, star, cap,
+cup, map, mic, note, news, scroll. The fields are described in full at the top of
+`src/data/footprints.ts` and `src/data/achievements.ts`.
 
 ### Add photos
 
@@ -195,6 +231,9 @@ npm run build && npx wrangler versions upload --preview-alias try
 
 and open `https://try-wenjia-me.<account>.workers.dev`. `www.wenjia.me` is redirected to
 `wenjia.me` by a redirect rule on the Cloudflare zone.
+
+The life achievements board on the Misc page borrows its idea and part of its code from
+He Geng's [life-achievements](https://github.com/genghe02/life-achievements), with thanks.
 
 Old Jekyll URLs are redirected by `public/_redirects`. The previous Jekyll site is kept on
 the `legacy-jekyll` branch.

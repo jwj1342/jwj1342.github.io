@@ -1,18 +1,18 @@
 ---
 title: "How this site was built"
-description: "From a Jekyll template to Astro and Cloudflare, with the reasons for each choice, where the colours and typefaces came from, and a few traps along the way."
+description: "From a Jekyll template to Astro and Cloudflare, with the reasons for each choice, where the colours and typefaces came from, and a few problems along the way."
 lang: en
 # Translated by Claude, not by scripts/translate.mjs. `npm run translate` will redo it when
 # the Chinese post changes; add "locked: true" to keep this version instead.
-sourceHash: b45952076a9d2af4
+sourceHash: f96343655a081c91
 model: "claude"
 ---
 
-My old homepage had always worn a Jekyll academic template, sitting on GitHub Pages. It worked well enough, but every time I wanted to add something of my own I first had to dig through a template someone else had written, and changing it never felt right.
+My previous homepage used a Jekyll academic template hosted on GitHub Pages. It worked, but every time I wanted to add something of my own I first had to understand a template someone else had written, which made each change expensive.
 
-So this time I simply tore it down and started over. The new site does not even have a server of its own, and still I managed to stuff quite a few fun things into it. A cat that really runs a language model squats at the bottom of the screen, the Misc page has a globe you can drag around, and at the very bottom of the homepage there is a map of visitors. Almost all of it was done in tandem with Claude Code. I asked for things and made the calls, and it wrote the code and ran the checks.
+So this time I rewrote all of it. The new site has no server of its own and yet does considerably more than the old one. A cat at the bottom of the screen runs a language model, the Misc page has a globe that can be dragged, and the bottom of the homepage shows a map of visitors. The work was done together with Claude Code. I stated the requirements and chose between options, and it wrote the code and verified it.
 
-Here is how it came together, why I chose what I chose, and which traps I walked into along the way.
+This post records the structure of the site, the reasoning behind each choice, and a few problems that came up along the way.
 
 ## The whole picture first
 
@@ -25,19 +25,19 @@ flowchart LR
   V --> M["models.wenjia.me"] --> R2[("R2<br/>model weights")]
 ```
 
-Put plainly, it is three things, a pile of static files, two API addresses and two storage buckets.
+The site consists of three parts, which are static files, two API addresses and two storage buckets.
 
-The pages are all HTML, CSS and JS produced at build time. A visitor arrives, takes the files and leaves, and no program runs in between. The only addresses that execute code are the two under `/api/`, one that keeps the visitor log and one that feeds the visitor map. As for big things like photos and model weights, I threw them into storage buckets of their own and left only an address in the page.
+The body of the site is static. The pages are generated as HTML, CSS and JS at build time, those files are what a visitor receives, and no program runs in between. The only addresses that execute code are the two under `/api/`, one that records the visitor log and one that supplies data to the visitor map. Photos and model weights are too large to belong in the code repository, so they are kept in storage buckets and the pages only refer to their addresses.
 
 ## Why Astro
 
-Once I had one thing clear, choosing was easy. Nine tenths of a personal homepage is text that does not move. A bio, a list of papers, blog posts. Once written, they are done.
+The choice of Astro starts from what a personal homepage contains. Nine tenths of it is text that does not change, such as a bio, a list of papers and blog posts, and once written it needs no further computation.
 
-And yet many front-end frameworks insist on handing the whole page to JavaScript and rendering it a second time in the visitor's browser. For a site that is mostly text, that means making visitors pay in bandwidth for something they will never use. Jekyll is purely static, to be fair, but I had already learned how awkward it is to add interaction inside its templates.
+Many front-end frameworks hand the whole page to JavaScript by default and render it again in the visitor's browser. For a site that is mostly text, this means visitors download extra code for features they do not use. Jekyll is purely static and does not have this problem, but adding interaction inside its templates is inconvenient, which is one of the reasons I wanted to leave it.
 
-[Astro](https://astro.build) sits right in between. By default it puts out plain HTML with not a single line of JavaScript, and only the parts that need interaction load a script of their own. So there is no React on this site, and no Vue. The globe's code loads only on the Misc page, and the visitor map's code is not fetched until you have nearly scrolled to the bottom. Even the diagrams you are looking at work this way. The Mermaid library that draws them is no lightweight, and only posts with a diagram invite it in.
+[Astro](https://astro.build) sits between the two. By default it outputs only HTML with no JavaScript at all, and only the parts that need interaction load their own scripts. As a result this site uses neither React nor Vue. The globe's code loads only on the Misc page, and the visitor map's code is requested only when the page has been scrolled close to the bottom. The diagrams in this post follow the same approach. The Mermaid library that draws them is not small, so only posts that contain a diagram load it.
 
-Managing content is a pleasure too. Papers and blog posts are Markdown files, each kind has an agreed set of fields, and the one for blog posts looks like this.
+The other reason for choosing it is content management. Papers and blog posts are Markdown files, and each kind of content has an agreed set of fields. The one for blog posts is shown below.
 
 ```ts
 const blog = defineCollection({
@@ -51,15 +51,15 @@ const blog = defineCollection({
 });
 ```
 
-If my hand slips one day and I mistype a date or leave out a title, the build fails on the spot and the broken page never makes it online. Adding a paper is just adding one file, and the selection on the homepage, the list on the publications page and even the cat's knowledge all follow.
+With this in place, a malformed date or a missing title makes the build fail, so a faulty page is never published. Adding a paper also takes only one new file, after which the selection on the homepage, the list on the publications page and the cat's knowledge are all updated.
 
-Image optimisation comes for free. At build time images are converted to WebP and produced at several widths, the browser picks the one that fits, and I do not have to do a thing.
+In addition, Astro has image optimisation built in. At build time images are converted to WebP and produced at several widths, and the browser chooses the one that suits the screen.
 
 ## Colours taken from a painting
 
 ![Claude Monet, Impression, Sunrise, 1872](../../assets/art/impression-sunrise.jpg)
 
-I like Monet's paintings, so I did not go looking for a ready-made palette and took the colours straight from *Impression, Sunrise*. The teal of the harbour's morning mist is the main colour, that small orange of the sun is the second accent, and the background is a warm off-white, like a canvas that has not been painted yet.
+I like Monet's paintings, so the colours do not come from a ready-made palette but directly from *Impression, Sunrise*. The teal of the harbour's morning mist is the main colour, the orange of the sun is the second accent, and the background is a warm off-white close to unpainted canvas.
 
 <div class="swatches">
 <span style="--c:#f5f5f0"><b>Canvas</b><code>#f5f5f0</code></span>
@@ -72,9 +72,9 @@ I like Monet's paintings, so I did not go looking for a ready-made palette and t
 <span style="--c:#b9552c"><b>Sunrise orange</b><code>#b9552c</code></span>
 </div>
 
-I am stingy with the orange. It shows up in only a few places, such as the emphasised words of the homepage headline, the side branches and advisors' names in the career section, the answer the cat is generating, and the dots on the visitor map. If a colour is everywhere, it is hardly an accent any more.
+The orange is used with restraint and appears in only a few places, namely the emphasised words of the homepage headline, the branches and advisors' names in the career section, the answer the cat is generating, and the dots on the visitor map. The reason is that an accent colour works only when it is used sparingly. If it were everywhere, it would no longer emphasise anything.
 
-For the dark theme I did not take the lazy route of inverting the light one. I tuned it again from scratch as the same painting at night.
+The dark theme is not the light one inverted. It was tuned again as the same painting at night, so that the two themes still look like one site.
 
 <div class="swatches">
 <span style="--c:#0e1717"><b>Night</b><code>#0e1717</code></span>
@@ -87,7 +87,7 @@ For the dark theme I did not take the lazy route of inverting the light one. I t
 <span style="--c:#f0926c"><b>Sunrise orange</b><code>#f0926c</code></span>
 </div>
 
-There are five paler colours as well, used only to tint tokens in the homepage headline's generation animation. I took their names from Monet's paintings too, while I was at it.
+There are also five paler colours, used only to highlight tokens in the homepage headline's generation animation. Their names likewise come from things in Monet's paintings.
 
 <div class="swatches">
 <span style="--c:#f3d4dc"><b>Lily pink</b><code>#f3d4dc</code></span>
@@ -97,9 +97,9 @@ There are five paler colours as well, used only to tint tokens in the homepage h
 <span style="--c:#ddd6ef"><b>Wisteria</b><code>#ddd6ef</code></span>
 </div>
 
-The implementation, on the other hand, could not be plainer. Each colour is a CSS variable, the dark theme does nothing more than give the same variable names another set of values, and components write `var(--accent)` from start to finish. If you have switched the theme by hand, the choice is remembered in your browser and applied before the page is even painted, so there is no flash of the light theme.
+The implementation is not complicated. Each colour is a CSS variable and the dark theme simply gives the same variable names another set of values, so components only need to write `var(--accent)` without caring which theme is active. If a visitor has switched the theme by hand, the choice is stored in the browser and applied before the page is painted, so there is no flash of the light theme before the dark one appears.
 
-Hidden at the top of each page there is also a Monet that fades into the background. The publications page has *Impression, Sunrise*, the blog has *Water Lilies*, the photos page has *Woman with a Parasol*, and Misc has the Japanese footbridge.
+Beyond the colours, the top of each page carries a Monet that fades into the background. The publications page has *Impression, Sunrise*, the blog has *Water Lilies*, the photos page has *Woman with a Parasol*, and the Misc page has *The Japanese Footbridge*.
 
 ## Typefaces
 
@@ -109,15 +109,15 @@ Hidden at the top of each page there is also a Monet that fades into the backgro
 <p style="font-family:var(--mono);font-size:0.9rem"><small>The system's monospace, for code, dates and numbers</small>$ git log --graph career　　scholar.open()　　Sep 2026</p>
 </div>
 
-The typefaces ended up with three roles.
+The typefaces are divided into three roles by purpose.
 
-Headings and long English text go to [Newsreader](https://fonts.google.com/specimen/Newsreader). What won me over is its optical size axis. With one font file, it is fine and delicate when enlarged for a headline and sturdy and legible when shrunk for body text, so I do not need to find one face for each.
+Headings and long English text use [Newsreader](https://fonts.google.com/specimen/Newsreader). I chose it because it has an optical size axis. The same font file has finer strokes at large sizes and is sturdier and more legible at small sizes, so headings and body text can share one typeface.
 
-The interface and Chinese text use [Inter](https://rsms.me/inter/), and for the Chinese part I simply borrow the typeface already on the visitor's system. Making people download several megabytes of Chinese font just to look at my homepage is something I cannot bring myself to do, and besides, PingFang, Microsoft YaHei and Noto Sans have long been sitting on everyone's device. Code, dates and numbers use the system's monospace, which likewise costs not one byte of download.
+The interface and Chinese text use [Inter](https://rsms.me/inter/), with the Chinese part set in the typeface already on the visitor's system. A Chinese font file usually runs to several megabytes, while PingFang, Microsoft YaHei and Noto Sans are already present on visitors' devices, so there is no need to make visitors download another one. Code, dates and numbers use the system's monospace, which likewise needs no download.
 
-Newsreader and Inter are hosted along with the site through the Fontsource npm packages and do not go through Google Fonts. I have the page preload the three most used font files right at the top, so that text does not show its face in another typeface first and then suddenly jump to the final one.
+Newsreader and Inter are hosted with the site through the Fontsource npm packages and do not depend on Google Fonts. The three most used font files are preloaded at the top of the page, in order to avoid the jump that occurs when text is first shown in a fallback typeface and then switches to the final one.
 
-I also tuned Chinese and English posts separately. English uses the serif, and a line height of 1.7 is enough. Chinese switches to the sans-serif and needs the line height opened to 1.9 before it stops feeling cramped, plus justification, and punctuation is not allowed to start a line.
+Chinese and English posts are also set differently. English uses the serif at a line height of 1.7. Chinese glyphs are denser, so Chinese switches to the sans-serif with the line height raised to 1.9, is justified, and does not allow punctuation at the start of a line.
 
 ```css
 .prose:lang(zh) {
@@ -128,49 +128,51 @@ I also tuned Chinese and English posts separately. English uses the serif, and a
 }
 ```
 
-There is in fact a fourth typeface hidden on the Misc page, the pixel font Pixelify Sans used by the achievements board, only 12 KB and loaded only on that page. I did not dare use it for the level number on the board, though, because in a pixel font a 5 really does look too much like an S.
+Besides these three, the achievements board on the Misc page uses a pixel font, Pixelify Sans. It is only 12 KB and is loaded only on that page. The numbers on the board do not use it, because in a pixel font a 5 and an S are hard to tell apart.
 
-## A few small touches on the homepage
+## A few small designs on the homepage
 
-The homepage headline is not simply shown. It is generated bit by bit, in imitation of a language model decoding, popping out one token at a time. What has not been generated yet shows as noise of the same shape, and a small chart beside it draws a next-token distribution, from which one bar is sampled at every step. It looks fancy, but the real text sits quietly in the HTML the whole time and the noise is only a layer on top. So search engines still read it, people who turn animations off still see it, and the layout does not shake.
+The homepage headline is not shown directly but generated step by step. It imitates the decoding process of a language model, with the text appearing token by token. The part not yet generated is shown as noise of the same shape, and a small chart beside it draws the next-token distribution, from which one bar is sampled at each step. This is only a visual effect. The real text is in the HTML throughout and the noise is merely a layer on top of it. Search engines can therefore read it normally, visitors who turn animations off see the text directly, and the layout does not shift because of the animation.
 
-I did not spare the outbound links either and wrote them all as tool calls. Google Scholar is `scholar.open()` and GitHub is `github.pull()`. Friends who build agents should get a laugh out of it.
+The outbound links on the homepage are treated in a similar way and written as tool calls. Google Scholar is `scholar.open()` and GitHub is `github.pull()`, which echoes my research on code agents.
 
-The career section I just drew as `git log --graph`. The main line is a commit history, an internship is a branch pulled off to the side, and when it is over it merges back.
+For the same reason the career section is drawn as `git log --graph`. The main line is a commit history, an internship is a branch off the main line, and when it ends it merges back.
 
 ## The cat at the bottom of the screen
 
-That Pop Cat at the bottom of the screen is not a decoration. It is a genuine language model, Qwen3.5 0.8B to be exact, running in your own browser through [WebLLM](https://webllm.mlc.ai), on your graphics card, which is to say on WebGPU. There is no inference server behind it and no API key, and I do not pay a cent for inference.
+Pop Cat, at the bottom of the screen, is a language model that actually runs. It is Qwen3.5 0.8B, running in the visitor's own browser through [WebLLM](https://webllm.mlc.ai) on the visitor's graphics card, that is, on WebGPU. Because inference happens on the visitor's device, it needs neither an inference server nor an API key.
 
-Of course people cannot be made to download a model the moment they open the page. The weights do not start downloading until you ask your first question. They are about 430 MB and then stay in the browser's cache. The model runs in a background thread, so the page does not freeze while it is deep in thought. And if your browser does not support WebGPU, the cat says outright that it cannot wake up the moment you open the chat box, and switches the input off while it is at it, so you are not left stuck after clicking.
+The model weights are about 430 MB and cannot be downloaded as soon as the page opens. They therefore start downloading only when the visitor asks a first question, and once downloaded they stay in the browser's cache, so they do not have to be downloaded again. The model runs in a background thread, so the page does not freeze during inference. If the browser does not support WebGPU, the cat explains why when the chat box is opened and disables the input, so a visitor never clicks and gets no response.
 
-Where to keep the weights was a problem. WebLLM downloads from Hugging Face by default, but that address simply cannot be reached from mainland China. In the end I mirrored them into my own R2 bucket, and since R2 does not charge for download traffic, a 430 MB file can be downloaded as often as anyone likes.
+The weights are stored in my own R2 bucket. This is because WebLLM downloads from Hugging Face by default, and that address cannot be reached from mainland China. R2 does not charge for download traffic, so however many times a 430 MB file is downloaded, it costs nothing.
 
-Not one sentence of what the cat knows about me was written for it by hand. At build time a script puts the site's career, papers and achievements together into a profile and hands it over, so when I change my career on my side, it changes its story on its side.
+What the cat knows about me is not written by hand. At build time a script compiles the site's career, papers and achievements into a profile and passes it to the model, so after I update my career the cat's answers change accordingly.
 
-The funniest part is that this cat does not quite do as it is told. I wanted every sentence to end in meow, but a 0.8B model has a very limited memory and forgets as it goes. Reasoning with it did not work, so I stopped reasoning. I wait until it has finished writing and then have code force the end of every sentence into a meow. Language has the same problem. You ask in Chinese and it may well answer in English, and it turned out that the instruction to answer in Chinese has to be tucked in both before and after the question to work, because a small model would rather listen to what it read first and last.
+Using a small model brings one practical problem, which is that it cannot reliably follow formatting requirements. I wanted every sentence to end in meow, but a 0.8B model cannot always do so. The requirement is therefore not given to the model. It is handled by code after the model has produced its output, which changes the end of every sentence to meow. Language is a similar case. When a question is asked in Chinese, the instruction to answer in Chinese has to appear both before and after the question, because a small model tends to use the language it read first and last.
 
 ## The globe
 
-The Misc page has a globe marking the places I have been.
+The Misc page has a globe that marks the places I have been.
 
-The first version just used a dot-matrix style library, with coastlines pieced together from small dots. It looks rather cool from a distance, but zoom in and it turns into a blur. So I tore it down and drew it again, on a canvas of my own, with [d3-geo](https://d3js.org/d3-geo) for the orthographic projection and [Natural Earth](https://www.naturalearthdata.com) vector data to trace the coastlines and borders. The good thing about vectors is that they never blur however far you zoom, and the whole world map is only about a hundred KB.
+The first version used a dot-matrix style library that draws coastlines as small dots. This looks good when zoomed out, but it becomes blurry when zoomed in and neighbouring cities are hard to tell apart. I therefore changed to drawing it myself on a canvas, with [d3-geo](https://d3js.org/d3-geo) for the orthographic projection and [Natural Earth](https://www.naturalearthdata.com) vector data for the coastlines and borders. Vector data stays sharp at any zoom level, and the whole world map is only a little over a hundred KB.
 
-Once there are many place names they start to fight, so they also have to make way for each other. The rule is not complicated. A name is first written to the right of its dot, if the right is taken it moves to the left, and if there is no room on either side only the dot stays, and the name is let out once you zoom in.
+As the number of places grows their names overlap, so a rule is needed to keep them apart. A name is written to the right of its dot by default, moves to the left when the right is occupied, and when neither side has room only the dot is kept, with the name shown again once zooming in has made enough space.
 
-Two traps from the redrawing stuck with me.
+The places are kept in a JSON file, one line per place with its name, country, coordinates, year and kind, so adding a place only takes one more line. As the places grow in number the list beside the globe grows with them, so its height is limited to that of the globe, the rest scrolls inside the list, and when a place is selected the list scrolls to its row automatically.
 
-The first was this. I finished redrawing, opened the page, and the globe had become a plain disc with no land, while the console was spotless, without a single error. It took a round of searching to find out that the script reads its colours from CSS variables, and the page still carried the old version's variable names, with the new ones not defined at all. And of all things, a canvas handed an empty colour value does not raise an error. It just quietly carries on with the previous colour, so land, sea and lines were all painted the same.
+Two problems from the rewrite are worth recording.
 
-The second was better hidden. Zoom in four times and out four times and you should be back where you started, yet the zoom-out button did not turn grey. The reason is that each step multiplies or divides by 1.6, and after the round trip a floating-point number is not exactly 1 but the tiniest bit more, so the program solemnly concluded that there was still room to zoom out.
+The first is that after the rewrite the globe became a plain disc with no land, and the console showed no error. The cause was that the script reads its colours from CSS variables while the page still carried the old version's variable names, so the new variables were undefined. Setting an empty colour value on a canvas does not raise an error. It keeps using the previous colour, so land, sea and lines all ended up the same colour.
+
+The second problem was in zooming. After zooming in four times and out four times, the zoom-out button did not become disabled. This is because each step multiplies or divides by 1.6, and after floating-point arithmetic the result is not exactly 1 but slightly greater, so the program judged that it could still zoom out. The fix was to round the zoom factor to a fixed precision after every step.
 
 ## An achievements board modelled on Minecraft
 
-The thing on the Misc page that took the most care is in fact the board of life achievements. I like playing Minecraft, so it is modelled on the game's advancements screen. A main line runs from top to bottom through each stage of life, the achievements unlocked in a stage branch off to the side, the locked ones are grey, and those marked secret show nothing but three question marks.
+The board of life achievements on the Misc page is designed after the advancements screen in Minecraft, because it is a game I like. A main line runs from top to bottom through the stages of life, the achievements unlocked in each stage branch off beside it, locked achievements are shown in grey, and those marked secret show only question marks.
 
-Some of the source code for this part borrows from a project by my good friend He Geng, and I would like to thank him here.
+The idea and part of the source code borrow from [life-achievements](https://github.com/genghe02/life-achievements), a project by my good friend He Geng, and I would like to thank him here. His project is an application that can be used directly to record one's own achievements in the same way.
 
-What pixel art fears most is blur. Let a single edge miss the pixel grid, or let a little rounding or a gradient creep in somewhere, and the flavour is gone at once. So the whole board recognises one unit only. One pixel is set to 3px, and outlines, highlights and shadows, and the wires between achievements are all whole multiples of it. The raised look of a tile is not a texture either. It is three layers of box-shadow stacked up, a dark outline on the outside, a bright edge inside the top left and a dark edge inside the bottom right, and together they look like a block standing proud of the surface.
+Pixel art is demanding about precision. If a single edge does not fall on the pixel grid, or rounding or a gradient appears somewhere, the overall look is spoiled. The whole board therefore uses one unit of length. One pixel is set to 3px, and the outlines, highlights, shadows and the wires between achievements are all whole multiples of it. The raised look of a tile is not made with an image either. It is built from three layers of box-shadow, a dark outline on the outside, a bright edge inside the top left and a dark edge inside the bottom right, which together form a raised block.
 
 ```css
 .tile {
@@ -181,7 +183,7 @@ What pixel art fears most is blur. Let a single edge miss the pixel grid, or let
 }
 ```
 
-We drew the icons square by square and used no assets from the game. Each icon is a 14 by 14 grid, which in the code is simply 14 strings, with one character per pixel, a dot for transparent, and a letter that is looked up in a palette. The pickaxe below is the badge at the top left of the board.
+We drew the icons square by square and used no assets from the game. Each icon is a 14 by 14 grid, which in the code is 14 strings, with one character per pixel, a dot for transparent and a letter that refers to a colour in the palette. The pickaxe below is the badge at the top left of the board.
 
 ```ts
 pickaxe: [
@@ -202,23 +204,25 @@ pickaxe: [
 ],
 ```
 
-The palette has 14 colours in all, and each material takes a pair of letters, lower case for the dark side and upper case for the light side. `w` and `W` are wood, `s` and `S` are stone and iron, `g` and `G` are gold. Recolouring an icon means changing letters, and drawing a new one means filling in one more grid. At build time these strings are turned into small squares in an SVG, with neighbouring pixels of the same colour in a row merged into one rectangle first, so the icons are tiny and their edges stay hard at any size. There are 13 of them so far, among them a pickaxe, an axe, a sword, a book, a gem and a star.
+The palette has 14 colours and each material uses a pair of letters, lower case for the dark side and upper case for the light side. For example `w` and `W` are wood, `s` and `S` are stone and iron, and `g` and `G` are gold. This representation makes changes simple, since recolouring an icon only means changing letters and adding an icon only means filling in one more grid. At build time the strings are turned into small squares in an SVG, with neighbouring pixels of the same colour in a row first merged into one rectangle, so the icons are small in size and their edges stay sharp when enlarged. There are 13 icons at present, including a pickaxe, an axe, a sword, a book, a gem and a star.
 
-The background of the board looks like a dirt texture, but it is not an image either. It is a 12 by 12 pixel texture computed at build time from a fixed random seed, picking from six earth colours and then tiled. The seed is fixed, which is why it comes out identical on every build.
+The background of the board looks like a dirt texture, but it is not an image either. It is a 12 by 12 pixel texture computed at build time from a fixed random seed, with colours chosen from six earth tones and then tiled. Because the seed is fixed, every build produces exactly the same result.
 
-The experience bar keeps to the rules of the game as well. Each unlocked achievement adds 100 experience by default, level 2 takes 200, every level after that takes 100 more than the last, and the bar is cut into 18 segments. The lettering on the board is the pixel font mentioned earlier, with the level and experience numbers as the only exception, for the reason already given, that in a pixel font a 5 looks too much like an S.
+The experience bar follows the rules of the game. Each unlocked achievement gives 100 experience by default, level 2 requires 200, each later level requires 100 more than the one before, and the bar is divided into 18 segments.
 
-One more thing sets it apart from the rest of the site. The board does not follow the light and dark themes. It has a fixed set of colours of its own, like a small game window set into the page.
+The achievements are likewise kept in a JSON file whose structure matches the tree on the board. The main line and the side quests are each an array, and child achievements are nested under the one they belong to. This file and the file of places are both checked at build time. If a field is missing or an icon does not exist, the build fails and points to the entry concerned, so day-to-day maintenance does not require reading the code.
+
+The board differs from the rest of the site in one more respect. It does not follow the light and dark themes and uses a fixed set of colours instead. The reason is that its colours come from the game and not from Monet, so it is more fitting to treat it as a separate window set into the page.
 
 ## Why move to Cloudflare and not stay on GitHub Pages
 
-To be honest, GitHub Pages is rather good. It is free and carefree, a push puts it live, and the old site had always lived there. The trouble is that it could not catch a single one of the things the new site wants to do.
+The old site was always hosted on GitHub Pages. It is free and needs little attention, and a push is enough to publish. The new site did not continue to use it because it does not provide several capabilities the new site requires.
 
-GitHub Pages does exactly one thing, which is to send the files in a repository to visitors as they are. It cannot run server-side code, so the API for the visitor log has nowhere to go, and a database is out of the question. It is tight on size too. A site may not exceed 1 GB and a file over 100 MiB in a repository is refused outright, while the cat's model weights alone are 430 MB and the photos will only pile up. It will not even let you configure response headers or redirects. As you will see below, it cannot manage something as small as a 301 from the old address to the new one.
+What GitHub Pages does is serve the files in a repository to visitors as they are. It cannot run server-side code, so the API for the visitor log has nowhere to be deployed, and no database is available. It limits size as well. A site may not exceed 1 GB and a repository rejects files over 100 MiB, while the cat's model weights alone are 430 MB and the photos will keep growing. It also does not support configuring response headers or redirects. As described later, it cannot meet a requirement such as a 301 from the old address to the new one.
 
-I could of course have cobbled things together, with the pages left on GitHub, the API on some cloud function and the files on some object store. But I really did not want to look after three accounts and three ways of deploying for the sake of one personal homepage. Cloudflare puts all of these in one place, each with a free allowance, and at this site's level of use I am a long way from the ceiling of any of them.
+One option is to spread these functions over several services, with the pages left on GitHub, the API on some cloud function and the files on some object store. But that requires maintaining three accounts and three ways of deploying, which is a high cost for a personal homepage. Cloudflare gathers these capabilities in one place and each has a free allowance, and this site's usage is far below the ceilings of those allowances, so I chose it in the end.
 
-I have put the parts I use in a table.
+The Cloudflare parts this site uses are listed below.
 
 | Part | What it does on this site | Free allowance |
 | --- | --- | --- |
@@ -232,21 +236,21 @@ I have put the parts I use in a table.
 | Email Service | Emails me when the database needs attention | Sending to your own verified address is not charged |
 | Workers AI | Translates blog posts, called only when I run the script on my computer | 10,000 Neurons a day |
 
-The first two rows are really two faces of one Worker. A Worker can carry a set of static files and it can carry a piece of code. Visiting the static files is free and unlimited and does not disturb that code in the slightest. Only the `/api/*` paths that I name in the configuration are handed to the code, and only those requests count against the hundred thousand a day. In other words, the pages can be viewed any number of times at no cost, and the only thing I really have to watch is the log API.
+The first two rows of the table are two parts of the same Worker. A Worker can contain a set of static files and can also contain a piece of code. Requests for the static files are free and unlimited and do not invoke that code. Only the `/api/*` paths specified in the configuration are handled by the code, and only those requests count against the allowance of one hundred thousand a day. Page views therefore cost nothing, and the only thing that needs attention is the log API.
 
-D1 is very little trouble to use. It is simply SQLite running on Cloudflare, with no connection string and no port, and what a Worker gets in its hands is directly an object that executes SQL. The table definitions live in the repository's `migrations/` directory, and one command applies them to the live database.
+D1 is SQLite running on Cloudflare. It needs no connection string or port to be configured. What a Worker receives is an object that executes SQL directly, which makes it very little trouble to use. The table definitions are kept in the repository's `migrations/` directory and applied to the live database with one command.
 
-R2 won me over on a single point, which is that download traffic is free. It is S3-compatible object storage that charges only for how much is stored and how many operations are made. I have two buckets, one for photos and one for model weights, each bound to a subdomain.
+R2 is S3-compatible object storage. I chose it mainly because it does not charge for download traffic and bills only for the amount stored and the number of operations. I created two buckets, one for photos and one for model weights, each bound to a subdomain.
 
-The rest are small parts. Workers Builds looks after building and publishing after a push, Cron Triggers wakes the Worker once a day to take a look at the database, Email Service lets the Worker send me a warning, and Workers AI is only ever called when I run the translation script on my own computer.
+The remaining parts each have a single job. Workers Builds builds and publishes automatically after a push, Cron Triggers invokes the Worker once a day to check the database, Email Service lets the Worker send me a warning by email, and Workers AI is called only when I run the translation script on my own computer.
 
-GitHub has not been laid off either. The code is still on GitHub, a push is still where publishing starts, and the redirect pages for the old address are still served by GitHub Pages. It has only changed from the place where the site lives into the place where the code lives and the build is triggered.
+It should be noted that GitHub is still in use. The code is still hosted on GitHub, a push is still the starting point of publishing, and the redirect pages for the old address are still served by GitHub Pages. Only its role has changed, from hosting the site to hosting the code and triggering the build.
 
 ## wrangler, and why not deploy with GitHub Actions
 
-Dealing with Cloudflare takes one tool from beginning to end, its official command line, wrangler.
+Every operation on Cloudflare is done through wrangler, which is Cloudflare's official command-line tool.
 
-What I like best is that all the wiring is written in one configuration file. The Worker's entry point, the static file directory, the database, the rate limit, the schedule and email each take a few lines, and one glance shows what the whole back end of the site looks like. Here is an excerpt.
+One of its advantages is that the configuration of all the parts is gathered in a single file. The Worker's entry point, the static file directory, the database, the rate limit, the schedule and email each take a few lines, so reading this one file is enough to understand the whole back end of the site. An excerpt follows.
 
 ```jsonc
 {
@@ -265,22 +269,22 @@ What I like best is that all the wiring is written in one configuration file. Th
 }
 ```
 
-The `run_worker_first` in there is the naming I mentioned above. Any address it does not name returns a static file directly.
+The `run_worker_first` in it is the specification of paths mentioned above. Addresses it does not list return static files directly.
 
-The commands I actually use are just a handful. `wrangler dev` runs the whole site on my computer, with local stand-ins for the database, the rate limiter and email, so I can get the API sorted out on my own machine before it goes live. `wrangler deploy` publishes the build output together with the Worker. Changing the tables is `wrangler d1 migrations apply`, and running SQL straight against the live database is `wrangler d1 execute`, which is how I usually read the log. Even the script that adds photos calls `wrangler r2 object put` inside.
+Only a few commands are in daily use. `wrangler dev` runs the whole site on my computer, with local simulations of the database, the rate limiter and email, so the API can be made to work locally before it goes live. `wrangler deploy` publishes the build output together with the Worker. `wrangler d1 migrations apply` updates the tables, and `wrangler d1 execute` runs SQL directly against the live database, which is what I use to read the log. The script that adds photos also calls `wrangler r2 object put` internally.
 
-For automatic deployment there were two roads. One is GitHub Actions, with a workflow in the repository that has GitHub's machines build after every push and then call wrangler to publish. The nuisance is that an API token first has to be generated in Cloudflare and stored among GitHub's secrets, and that workflow file has to be kept alive from then on. The other is Cloudflare's own Workers Builds, where the Worker is connected to the GitHub repository in the dashboard, and after that, on every push, Cloudflare pulls the code itself, runs `npm run build`, and then runs `npx wrangler deploy`.
+There are two options for automatic deployment. The first is GitHub Actions, where a workflow written in the repository has GitHub's machines build after each push and then call wrangler to publish. This option requires an API token to be generated in Cloudflare and saved among GitHub's secrets, and the workflow file needs long-term maintenance. The second is Cloudflare's own Workers Builds, where the Worker is linked to the GitHub repository in the dashboard, and after each push Cloudflare pulls the code itself, runs `npm run build`, and then runs `npx wrangler deploy`.
 
-I took the second road for very practical reasons. No secret has to step outside Cloudflare, the repository does not have to keep a workflow file, and the build log hangs right on the Worker's page. More important still, the commands it runs are exactly the ones I type when I publish by hand, so the day something goes wrong I can reproduce it on my own computer.
+I chose the second for three reasons. First, no secret has to leave Cloudflare. Second, the repository does not need an extra workflow file to maintain, and the build log is shown directly on the Worker's page. Finally, the commands it runs are exactly the ones I use when publishing by hand, so when a problem occurs it can be reproduced on my own computer.
 
 ```mermaid
 flowchart LR
   L["git push"] --> G["GitHub"] --> B["Workers Builds<br/>build"] --> C["Cloudflare<br/>live"]
 ```
 
-From push to live takes about a minute. Having finished this post, all I have to do is type `git push` once.
+It takes about a minute from push to live, and publishing this post also takes only one `git push`.
 
-While I am at it, a word about the old address. `jwj1342.github.io` still opens today, thanks to a small trick. GitHub Pages does not support 301 redirects, so I have it publish a very small branch with only two pages in it, whose sole task is to send people to the same path on wenjia.me.
+Apart from deployment, the old address has to be handled. `jwj1342.github.io` can still be visited at present, which is achieved with a small technique. GitHub Pages does not support configuring 301 redirects, so I have it publish a very small branch containing only two pages, whose purpose is to take the visitor to the same path on wenjia.me.
 
 ```html
 <script>
@@ -288,45 +292,45 @@ While I am at it, a word about the old address. `jwj1342.github.io` still opens 
 </script>
 ```
 
-One of the two pages is `404.html`, and the whole trick hinges on it. None of the old site's addresses exist in the new branch, so they all fall through to the 404 page and are sent on to the new site. Once there, old publication links are caught by a table of redirects and matched to their new pages. The irony is that this table is exactly the kind of thing Cloudflare lets you configure and GitHub Pages does not.
+One of the two pages is `404.html`, and it is the key to this approach. None of the old site's addresses exist in the new branch, so they all land on the 404 page, which then redirects to the new site. After arriving there, old publication links are matched to their new pages by a table of redirects, and this table is exactly the kind of configuration that Cloudflare supports and GitHub Pages does not.
 
 ## The visitor map and the log
 
-That visitor map at the bottom of the homepage is the only place on the whole site that needs a back end.
+The visitor map at the bottom of the homepage is the only place on the site that needs a back end.
 
 ```mermaid
 flowchart LR
   B["A page opens"] --> W["Worker<br/>reads the visitor's city"] --> D[("D1")] --> M["Visitor map"]
 ```
 
-The back end is the Worker from before, about two hundred lines all told. As soon as a page opens, it says hello to `/api/log` with `sendBeacon`. The neat part is that I do not have to look up the location myself at all. Cloudflare attaches its estimate of the visitor's location to every request, in `request.cf`, down to the city. The Worker reads the city, writes it to D1, and that is that, without pulling in a single line of third-party analytics script. The map on the homepage then fetches those cities back from a second address and draws them as dots, with the same d3-geo and Natural Earth data as the globe, only with the orthographic projection swapped for the flat Natural Earth projection.
+The back end is the Worker mentioned above, about two hundred lines of code. When a page opens it sends one request to `/api/log` with `sendBeacon`. The visitor's location does not have to be looked up separately, because Cloudflare attaches its estimate of the visitor's location to every request, stored in `request.cf` and accurate to the city. The Worker only needs to read the city and write it to D1, so no third-party analytics script is required. The map on the homepage then retrieves these cities through a second address and draws them as dots, using the same d3-geo and Natural Earth data as the globe, with the orthographic projection replaced by the flat Natural Earth projection.
 
-I made myself a few rules about logging. No IP addresses stored, no cookies planted, and location no finer than the city. The pages turned in one visit are strung together by a random id that is valid only in the current browser tab, and once the tab is closed it is gone.
+I follow a few principles when logging. No IP address is stored, no cookie is set, and location is accurate only to the city. The pages of one visit are linked by a random id that is valid only within the current browser tab and ceases to exist when the tab is closed.
 
-I also keep the questions Pop Cat receives and the answers it gives, because I really am curious what people ask it. The chat box says so plainly. The model does run on your machine, true, but the questions are recorded, and that is not something to keep from you.
+The questions Pop Cat receives and its answers are also logged, so that I can understand what visitors care about and improve the material given to the model accordingly. Although the model runs locally on the visitor's machine, the questions are recorded, so the chat box states this explicitly.
 
-### A rate limit that did not quite work
+### How the rate limit behaved in practice
 
-An API hanging out on the public internet has to be guarded against people hammering it. Cloudflare happens to give Workers a rate limiter, so I set it to 60 requests a minute per visitor in passing and then hammered it myself to see whether it would hold.
+An API that is public on the internet needs protection against malicious floods of requests. Cloudflare provides rate limiting for Workers, which I set to 60 requests a minute per visitor and then tested.
 
-The result left me staring. A burst of 150 concurrent requests, all let through. Not ready to give up, I kept sending for half a minute, 300 in total, and in the end it stopped only 8. Was this rate limiter just for show?
+The test result did not match my expectation. A burst of 150 concurrent requests all passed. A further 300 requests sent over half a minute saw only 8 refused.
 
-Only when I went back through the documentation was the case solved. There it is in black and white. The limit is approximate, each Cloudflare location counts on its own, the counts are synchronised slowly in the background, and requests going over the configured number are entirely expected. If you really want one strict worldwide limit, the documentation's advice is to build one yourself with Durable Objects.
+The reason is explained in the documentation. The limit is approximate, each Cloudflare location counts separately and the counts are synchronised gradually in the background, so requests exceeding the configured number are expected behaviour. Where a strict worldwide limit is needed, the documentation recommends implementing one with Durable Objects.
 
-I very nearly went and built it, and then thought better of it. If a personal homepage gets hammered, the worst that happens is that the day's logging allowance is used up, and the site itself comes through without a scratch. So the final plan is much plainer. The Worker takes a look at the database on a schedule once a day, and if it is more than 80% full, or an absurd number of log lines came in within a day, it sends me an email, and I go and export and clean up. It is enough, and it is easy to keep alive.
+I considered implementing a strict limit as the documentation suggests and in the end did not. The reason is that for a personal homepage the worst result of a flood is that the day's logging allowance is used up, while the site itself is unaffected. I therefore adopted a simpler plan. The Worker checks the database on a schedule once a day, and if it is more than 80% full, or the number of log lines written in a day is clearly abnormal, it sends me an email and I export and clean up. This plan is sufficient for the actual risk and costs less to maintain.
 
-## Odds and ends
+## Other details
 
-Lastly, a few small things that do not deserve a section of their own and yet each took some effort.
+Finally, a few smaller problems are recorded here.
 
-The star and citation counts next to papers are grabbed from GitHub and OpenAlex at build time, and the browser refreshes them once more after the page opens. The catch is that GitHub's anonymous API lets one IP address ask only 60 times an hour, and on a campus network or conference Wi-Fi a whole crowd shares one address and uses that up in no time. So the numbers a browser fetches are kept locally for an hour and not asked for again in that time, and if they really cannot be fetched, the last saved number is used.
+The star and citation counts next to papers are obtained from GitHub and OpenAlex at build time, and the browser refreshes them once more after the page opens. GitHub's anonymous API allows only 60 queries an hour from one IP address, and on a campus network or conference Wi-Fi many people share one outgoing address, so the allowance is easily used up. The numbers a browser obtains are therefore kept locally for an hour and not requested again during that time, and when a request fails the last saved number is used.
 
-Styles on old phones caught me out once as well. The build tool by default rewrites media queries into a newer syntax, which Safari before 16.4 does not recognise, and what it does not recognise it throws away, whole rule and all. The fix is simple enough, which is to tell the build tool that the CSS it puts out has to be readable by old browsers too.
+Styles on old phones caused a problem once. The build tool by default rewrites media queries into a newer syntax, which Safari before 16.4 does not support, and it ignores the whole rule. The fix is to instruct the build tool to output CSS that old browsers can also recognise.
 
-Photos do not go into Git. Adding photos takes one command, and the script makes a thumbnail and a large view, wipes the location data from the photo, sends both to R2, and notes the size and main colour in a JSON file. The main colour is kept so that a patch of it can fill the photo's place before the image has loaded.
+Photos are not kept in Git. Adding photos takes one command. The script generates a thumbnail and a large view, removes the location data from the photo, uploads both to R2, and records the size and main colour in a JSON file. The main colour is recorded so that it can fill the photo's position before the image has finished loading.
 
 ## In closing
 
-I will stop here. The code is all on [GitHub](https://github.com/jwj1342/jwj1342.github.io), and if you are curious how some part is written, go and have a look.
+That is everything this site consists of at present. The source is on [GitHub](https://github.com/jwj1342/jwj1342.github.io), and if you want to know how a particular part is implemented, you can read it there directly.
 
-As for the cat at the bottom of the screen, you can ask it about me. Just remember that it is only 0.8B, and bear with it when it gets something wrong.
+The cat at the bottom of the screen can answer questions about me. It is only a 0.8B model, however, and its answers may be wrong, so for anything important please rely on what the pages themselves say.

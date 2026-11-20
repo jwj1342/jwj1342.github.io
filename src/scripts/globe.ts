@@ -3,7 +3,7 @@
  * (coastlines and country borders from Natural Earth), so it stays sharp at any zoom
  * and on any screen. Drag it to turn it; pick a label or a row in the list and the
  * globe turns to face that place; the +/- buttons zoom; the filter buttons show one
- * kind of place at a time. The places come from src/data/footprints.ts, through the page.
+ * kind of place at a time. The places come from src/data/footprints.json, through the page.
  */
 import { geoDistance, geoGraticule10, geoOrthographic, geoPath } from 'd3-geo';
 import { feature, mesh } from 'topojson-client';
@@ -25,6 +25,7 @@ function start(root: HTMLElement) {
   const ctx = canvas.getContext('2d')!;
   const labels = [...root.querySelectorAll<HTMLButtonElement>('.glabel')];
   const rows = [...root.querySelectorAll<HTMLButtonElement>('.place')];
+  const list = root.querySelector<HTMLElement>('.places');
   const filters = [...root.querySelectorAll<HTMLButtonElement>('[data-filter]')];
   const zoomButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-zoom]')];
 
@@ -236,6 +237,12 @@ function start(root: HTMLElement) {
     if (places[index]) {
       lonTarget = places[index].lon;
       latTarget = Math.max(-75, Math.min(75, places[index].lat));
+    }
+    // the list scrolls inside itself once it is long: bring the picked row into view
+    // there, without moving the page
+    const row = rows.find((r) => Number(r.dataset.place) === index)?.closest('li');
+    if (list && row && (row.offsetTop < list.scrollTop || row.offsetTop + row.offsetHeight > list.scrollTop + list.clientHeight)) {
+      list.scrollTo({ top: row.offsetTop - (list.clientHeight - row.offsetHeight) / 2, behavior: calm ? 'auto' : 'smooth' });
     }
     dirty = true;
   }
