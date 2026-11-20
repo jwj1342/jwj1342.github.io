@@ -115,6 +115,10 @@ its answer. It is all stored in the D1 database `wenjia-me`; nothing goes to ano
 company, no cookie is set and no IP address is kept. The location is the city that
 Cloudflare reports for the request.
 
+`/api/*` accepts requests only from the site's own pages and at most 60 a minute from one
+visitor (the `ratelimits` entry in `wrangler.jsonc`); beyond that it answers 429 and
+records nothing.
+
 | Table | What is in it |
 | --- | --- |
 | `page_views` | time (UTC), city, country, page, seconds on screen, where the visitor came from, phone or desktop, browser language, session |

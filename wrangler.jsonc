@@ -29,6 +29,10 @@
       "migrations_dir": "migrations"
     }
   ],
+  // At most this many /api/* requests a minute from one visitor (counted by IP address,
+  // separately in each Cloudflare location); more are answered with 429. A real visit
+  // makes two or three per page. `namespace_id` only has to be a number of our choosing.
+  "ratelimits": [{ "name": "API_LIMIT", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } }],
   // Keeps the Worker's own log lines (errors) readable in the dashboard.
   "observability": { "enabled": true }
 }

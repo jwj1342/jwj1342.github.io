@@ -9,6 +9,10 @@
  *
  * Everything is kept in the D1 database `wenjia-me` (tables in migrations/). No IP
  * address or cookie is stored; the location is the city Cloudflare reports.
+ *
+ * Both addresses are rate-limited per visitor (the limit is set in wrangler.jsonc), so
+ * that nobody can flood the log. The visitor's IP address is the key Cloudflare counts
+ * by; it is used for that count only and never written anywhere.
  */
 
 // Just enough of the Workers types for this file, so the site's own type check passes
@@ -22,6 +26,8 @@ interface Statement {
 interface Env {
   DB: { prepare(sql: string): Statement; batch(statements: Statement[]): Promise<unknown> };
   ASSETS: { fetch(request: Request): Promise<Response> };
+  /** Cloudflare's rate limiter: `success` is false once this key has used up its allowance. */
+  API_LIMIT: { limit(options: { key: string }): Promise<{ success: boolean }> };
 }
 interface Context {
   waitUntil(promise: Promise<unknown>): void;
@@ -142,6 +148,15 @@ async function visitors(request: Request, env: Env, ctx: Context): Promise<Respo
 export default {
   async fetch(request: Request, env: Env, ctx: Context): Promise<Response> {
     const { pathname } = new URL(request.url);
+    if (pathname.startsWith('/api/')) {
+      let allowed = true;
+      try {
+        allowed = (await env.API_LIMIT.limit({ key: request.headers.get('CF-Connecting-IP') ?? 'unknown' })).success;
+      } catch (error) {
+        console.error(error); // if the limiter itself fails, let the request through
+      }
+      if (!allowed) return new Response('Too many requests', { status: 429, headers: { 'Retry-After': '60' } });
+    }
     try {
       if (pathname === '/api/log' && request.method === 'POST') return await log(request, env);
       if (pathname === '/api/visitors' && request.method === 'GET') return await visitors(request, env, ctx);
