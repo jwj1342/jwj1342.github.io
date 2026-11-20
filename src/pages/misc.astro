@@ -1,0 +1,644 @@
+---
+import '../styles/prose.css';
+// pixel typeface, used only by the achievements section (12 KB)
+import '@fontsource-variable/pixelify-sans';
+import Base from '../layouts/Base.astro';
+import ArtBanner from '../components/ArtBanner.astro';
+import AchievementNode from '../components/AchievementNode.astro';
+import PixelIcon from '../components/PixelIcon.astro';
+import bridge from '../assets/art/japanese-footbridge.jpg';
+import { story, sideQuests, type Achievement } from '../data/achievements';
+import { footprints, footprintKinds, type FootprintKind } from '../data/footprints';
+// Free-form notes below the achievements are plain Markdown: edit src/content/pages/misc.md.
+import { Content } from '../content/pages/misc.md';
+
+// The board's background: a small earth-coloured pixel texture, generated here from a
+// fixed seed (so it is the same on every build) rather than taken from an image.
+let seed = 20261119;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const earth = ['#3a2a1c', '#42301f', '#35261a', '#49362a', '#2e2116', '#3e2d1e'];
+let pixels = '';
+for (let y = 0; y < 12; y++) {
+  for (let x = 0; x < 12; x++) {
+    pixels += `<rect x='${x}' y='${y}' width='1' height='1' fill='${earth[Math.floor(rnd() * earth.length)]}'/>`;
+  }
+}
+const texture = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' shape-rendering='crispEdges'>${pixels}</svg>`,
+)}")`;
+
+const flat = (n: Achievement): Achievement[] => [n, ...(n.children ?? []).flatMap(flat)];
+const all = [...story, ...sideQuests].flatMap(flat);
+const unlocked = all.filter((a) => a.done).length;
+
+// Experience: every unlocked achievement is worth its `xp` (100 unless it says otherwise).
+// Each level needs more than the last: 200 to reach level 2, 300 more for level 3, ...
+const xp = all.filter((a) => a.done).reduce((sum, a) => sum + (a.xp ?? 100), 0);
+let level = 1;
+let into = xp;
+let need = 200;
+while (into >= need) {
+  into -= need;
+  level++;
+  need += 100;
+}
+const percent = Math.round((into / need) * 100);
+
+// Footprints: the places on the globe at the top of the page.
+const kinds = (Object.keys(footprintKinds) as FootprintKind[]).filter((k) => footprints.some((f) => f.kind === k));
+const countries = new Set(footprints.map((f) => f.country)).size;
+---
+
+<Base title="Misc" description="Miscellaneous notes, links and other odds and ends from Wenjia Jiang.">
+  <ArtBanner image={bridge} title="Bridge over a Pond of Water Lilies" focus="50% 35%" />
+  <div class="wrap">
+    <header class="page-head after-art">
+      <p class="eyebrow">Misc</p>
+      <h1>Odds and ends</h1>
+    </header>
+
+    <section class="footprints" aria-labelledby="footprints" data-globe data-places={JSON.stringify(footprints.map(({ lat, lon, kind }) => ({ lat, lon, kind })))}>
+      <div class="fp-head">
+        <div>
+          <h2 id="footprints">Footprints</h2>
+          <p class="fp-count">{footprints.length} places · {countries} {countries === 1 ? 'country' : 'countries'}</p>
+        </div>
+        <div class="filters" role="group" aria-label="Show">
+          <button type="button" data-filter="all" aria-pressed="true">All</button>
+          {
+            kinds.map((k) => (
+              <button type="button" data-filter={k} aria-pressed="false">
+                <i class={`dot ${k}`} />
+                {footprintKinds[k].label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="fp-grid">
+        <div class="globe-stage">
+          <canvas aria-hidden="true"></canvas>
+          {
+            footprints.map((f, i) => (
+              <button type="button" class={`glabel away ${f.kind}`} data-place={i} aria-pressed="false" aria-label={[f.place, f.country, f.when].filter(Boolean).join(', ')}>
+                <i />
+                <span>{f.place}</span>
+              </button>
+            ))
+          }
+          <div class="zoom">
+            <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
+            <button type="button" data-zoom="out" aria-label="Zoom out" disabled>−</button>
+          </div>
+          <p class="hint">Drag to turn</p>
+        </div>
+        <ul class="places">
+          {
+            footprints.map((f, i) => (
+              <li>
+                <button type="button" class="place" data-place={i} data-kind={f.kind} aria-pressed="false">
+                  <i class={`dot ${f.kind}`} />
+                  <span class="text">
+                    <b>{f.place}</b>
+                    <span class="desc">
+                      {f.country} · {f.purpose}
+                    </span>
+                    {f.photo && <img class="photo" src={f.photo} alt={f.place} loading="lazy" />}
+                  </span>
+                  <span class="when">{f.when}</span>
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="achievements">
+      <div class="panel" style={`--tex:${texture}`}>
+        <div class="head">
+          <span class="badge" aria-hidden="true"><PixelIcon name="pickaxe" /></span>
+          <div class="titles">
+            <h2 id="achievements">Life achievements</h2>
+            <p class="sub">{unlocked} of {all.length} unlocked</p>
+          </div>
+          <span class="chip">Preview · TBD</span>
+        </div>
+        <div class="xp" role="img" aria-label={`Level ${level}, ${into} of ${need} experience towards level ${level + 1}`}>
+          <span class="lv">{level}</span>
+          <span class="bar"><span class="fill" style={`width:${percent}%`} /></span>
+          <span class="num"><span>Level {level}</span><span>{into} / {need} XP</span></span>
+        </div>
+        <ul class="tree story">
+          {story.map((node) => <AchievementNode node={node} />)}
+        </ul>
+        <h3>Side quests</h3>
+        <ul class="tree">
+          {sideQuests.map((node) => <AchievementNode node={node} />)}
+        </ul>
+      </div>
+    </section>
+
+    <div class="body prose">
+      <Content />
+    </div>
+  </div>
+</Base>
+
+<script>
+  import '../scripts/globe';
+</script>
+
+<style>
+  .block {
+    border-top: 1px solid var(--line);
+    padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem);
+    max-width: 48rem;
+  }
+
+  /* The board is its own little world: a pixel-game window with fixed colours that do
+     not follow the site's light/dark theme. Everything on it is drawn here in CSS or
+     generated at build time. */
+  .panel {
+    --pixel: 'Pixelify Sans Variable', var(--mono);
+    --px: 3px;
+    --outline: #14100c;
+    --slot: #a9b0ac;
+    --slot-off: #5c6462;
+    --wire: #8d8478;
+    --board-ink: #f6f2e9;
+    --board-muted: #beb5a6;
+    --board-year: #f3d24b;
+    color: var(--board-ink);
+    background-color: #3a2a1c;
+    background-image: var(--tex);
+    background-size: 72px 72px;
+    image-rendering: pixelated;
+    padding: clamp(0.9rem, 3vw, 1.5rem) clamp(0.9rem, 3vw, 1.5rem) clamp(0.8rem, 2.5vw, 1.3rem);
+    box-shadow:
+      0 0 0 var(--px) var(--outline),
+      calc(var(--px) * 2) calc(var(--px) * 2) 0 var(--px) rgba(0, 0, 0, 0.28);
+    margin: 0 calc(var(--px) * 3) calc(var(--px) * 3) var(--px);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 0.9rem;
+    margin-bottom: 1.1rem;
+    padding-bottom: 1rem;
+    border-bottom: var(--px) solid rgba(0, 0, 0, 0.35);
+  }
+  /* the board's emblem: a gold frame around the pickaxe */
+  .badge {
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    flex-shrink: 0;
+    background: #f3c84b;
+    box-shadow:
+      0 0 0 var(--px) var(--outline),
+      inset var(--px) var(--px) 0 #fbe38f,
+      inset calc(-1 * var(--px)) calc(-1 * var(--px)) 0 #b9811a;
+  }
+  .badge :global(svg) {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+  .titles {
+    min-width: 0;
+    margin-right: auto;
+  }
+  .panel h2 {
+    font-family: var(--pixel);
+    font-weight: 600;
+    font-size: clamp(1.45rem, 4.2vw, 1.9rem);
+    line-height: 1.1;
+    margin: 0;
+    color: var(--board-ink);
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.55);
+  }
+  .sub {
+    margin: 0.3rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--board-year);
+  }
+  .chip {
+    font-family: var(--pixel);
+    font-size: 0.9rem;
+    line-height: 1;
+    color: #14100c;
+    background: #e9864f;
+    padding: 0.32rem 0.55rem;
+    box-shadow:
+      0 0 0 2px var(--outline),
+      inset 2px 2px 0 rgba(255, 255, 255, 0.35),
+      inset -2px -2px 0 rgba(0, 0, 0, 0.25);
+    white-space: nowrap;
+  }
+  /* experience bar: the level number sits centred over a green segmented bar */
+  .xp {
+    display: grid;
+    margin-bottom: 1.3rem;
+  }
+  .lv {
+    justify-self: center;
+    /* the mono face: the pixel digits are too easy to misread (5 looks like S) */
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: #8cf03a;
+    /* a one-pixel dark outline on every side, as game HUD numbers have */
+    text-shadow:
+      2px 0 0 #14100c,
+      -2px 0 0 #14100c,
+      0 2px 0 #14100c,
+      0 -2px 0 #14100c;
+    margin-bottom: 0.3rem;
+  }
+  .bar {
+    position: relative;
+    height: 0.8rem;
+    background: #1d2416;
+    box-shadow:
+      0 0 0 var(--px) var(--outline),
+      inset 0 var(--px) 0 rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+  }
+  .fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: #6fc21f;
+    box-shadow:
+      inset 0 var(--px) 0 #b9f56a,
+      inset 0 calc(-1 * var(--px)) 0 #478312;
+  }
+  /* notches that cut the bar into 18 segments */
+  .bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    --seg: calc(100% / 18);
+    background: repeating-linear-gradient(90deg, transparent 0 calc(var(--seg) - 2px), rgba(0, 0, 0, 0.6) calc(var(--seg) - 2px) var(--seg));
+  }
+  .num {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.55rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--board-muted);
+  }
+  .tree {
+    margin: 0;
+    padding: 0;
+  }
+  /* the main line: one wire running down through every chapter's tile */
+  .story > :global(li) {
+    padding-bottom: 0.5rem;
+  }
+  .story > :global(li:last-child) {
+    padding-bottom: 0;
+  }
+  .story > :global(li)::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--tile) / 2);
+    top: 0;
+    bottom: 0;
+    width: var(--px);
+    background: var(--wire);
+  }
+  .story > :global(li:first-child)::before {
+    top: calc(0.45rem + var(--tile) / 2);
+  }
+  .story > :global(li:last-child)::before {
+    bottom: auto;
+    height: calc(0.45rem + var(--tile) / 2);
+  }
+  h3 {
+    font-family: var(--pixel);
+    font-weight: 600;
+    font-size: 1.1rem;
+    line-height: 1.2;
+    color: var(--board-year);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    margin: 1.2rem 0 0.4rem;
+    padding-top: 1rem;
+    border-top: var(--px) solid rgba(0, 0, 0, 0.35);
+  }
+  /* ---- footprints: a globe with a label on every place, and the places listed beside it ---- */
+  .footprints {
+    /* the colour of each kind of place: on the globe's dots, the labels and the list */
+    --kind-conference: #b9552c;
+    --kind-base: #2f6260;
+    --kind-trip: #a8842a;
+    /* the globe is drawn on a canvas; scripts/globe.ts reads these */
+    --globe-sea: #dbe8e6;
+    --globe-land: #fbfbf8;
+    --globe-coast: #8fa9a6;
+    --globe-border: #cdd8d5;
+    --globe-grid: rgba(47, 98, 96, 0.12);
+    --globe-rim: #a9bebb;
+    --globe-halo: rgba(251, 251, 248, 0.9);
+    border-top: 1px solid var(--line);
+    padding: clamp(1.5rem, 4vw, 2.5rem) 0 clamp(2rem, 5vw, 3rem);
+  }
+  :global(:root[data-theme='dark']) .footprints {
+    --kind-conference: #f0926c;
+    --kind-base: #7fc3bd;
+    --kind-trip: #e6c65c;
+    --globe-sea: #172a2a;
+    --globe-land: #264340;
+    --globe-coast: #4f7b77;
+    --globe-border: #375a57;
+    --globe-grid: rgba(127, 195, 189, 0.09);
+    --globe-rim: #375a57;
+    --globe-halo: rgba(14, 23, 23, 0.75);
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .footprints {
+      --kind-conference: #f0926c;
+      --kind-base: #7fc3bd;
+      --kind-trip: #e6c65c;
+      --globe-sea: #172a2a;
+      --globe-land: #264340;
+      --globe-coast: #4f7b77;
+      --globe-border: #375a57;
+      --globe-grid: rgba(127, 195, 189, 0.09);
+      --globe-rim: #375a57;
+      --globe-halo: rgba(14, 23, 23, 0.75);
+    }
+  }
+  .fp-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .footprints h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-style: italic;
+    font-size: clamp(1.35rem, 3vw, 1.6rem);
+    line-height: 1.2;
+    margin: 0;
+  }
+  .fp-count {
+    margin: 0.2rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .filters button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2rem;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: none;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .filters button[aria-pressed='true'] {
+    color: var(--ink);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .filters button:focus-visible,
+  .glabel:focus-visible,
+  .place:focus-visible,
+  .zoom button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .dot,
+  .glabel {
+    --kind: var(--kind-conference);
+  }
+  .base {
+    --kind: var(--kind-base);
+  }
+  .trip {
+    --kind: var(--kind-trip);
+  }
+  .dot {
+    flex: none;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--kind);
+  }
+  .fp-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 52rem) {
+    .fp-grid {
+      grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: center;
+    }
+  }
+  /* the globe: a square that holds the canvas, the labels and the zoom buttons */
+  .globe-stage {
+    position: relative;
+    width: 100%;
+    max-width: 26rem;
+    aspect-ratio: 1;
+    margin-inline: auto;
+    overflow: hidden;
+    cursor: grab;
+    /* a sideways drag turns the globe; an up-and-down swipe still scrolls the page */
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    display: none;
+  }
+  /* shown once the globe has started (without scripts the list stands alone) */
+  :global(.globe-on) .globe-stage {
+    display: block;
+  }
+  .globe-stage.grabbing {
+    cursor: grabbing;
+  }
+  .globe-stage canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* a label: a ring on the place's dot and its name beside it */
+  .glabel {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.4rem 0.15rem 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.72rem;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    /* the ring sits exactly on the dot */
+    transform: translate(-0.45rem, -50%);
+    transition: opacity 0.2s ease;
+  }
+  .glabel.away {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .glabel i {
+    flex: none;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--kind);
+  }
+  .glabel span {
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.35rem;
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  /* the name goes on the left of the dot when the right is taken */
+  .glabel.flip {
+    flex-direction: row-reverse;
+    padding: 0.15rem 0 0.15rem 0.4rem;
+    transform: translate(calc(-100% + 0.45rem), -50%);
+  }
+  /* too close to another label to fit its name: only the ring shows (zoom in to read it) */
+  .glabel.tight span {
+    display: none;
+  }
+  .glabel.on {
+    z-index: 1;
+    font-weight: 600;
+  }
+  .glabel.on i {
+    background: color-mix(in srgb, var(--kind) 35%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--kind) 30%, transparent);
+  }
+  .glabel.on span {
+    background: var(--surface);
+    box-shadow: 0 0 0 1px var(--kind);
+  }
+  .zoom {
+    position: absolute;
+    right: 0.25rem;
+    bottom: 0.25rem;
+    display: grid;
+    gap: 0.3rem;
+  }
+  .zoom button {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .zoom button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .hint {
+    position: absolute;
+    left: 0.25rem;
+    bottom: 0.3rem;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .places {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .places li {
+    border-top: 1px solid var(--line);
+  }
+  .places li:first-child {
+    border-top: 0;
+  }
+  .place {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: 0.75rem;
+    width: 100%;
+    padding: 0.8rem 0.6rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .place:hover,
+  .place.on {
+    background: var(--accent-soft);
+  }
+  .place .text {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .place b {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+  .place .desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  /* a place's picture shows only while it is picked */
+  .place .photo {
+    display: none;
+    margin-top: 0.5rem;
+    max-width: 100%;
+    max-height: 16rem;
+    border-radius: 0.4rem;
+  }
+  .place.on .photo {
+    display: block;
+  }
+  .place .when {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .body {
+    border-top: 1px solid var(--line);
+    padding-top: clamp(1.5rem, 4vw, 2.5rem);
+  }
+</style>

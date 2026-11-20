@@ -1,0 +1,584 @@
+---
+/**
+ * Pop Cat: a floating cat in the bottom-right corner that opens a chat with a small
+ * language model running in the visitor's own browser. Settings (which model, the
+ * one-tap questions) are in src/data/popcat.ts; the behaviour is in src/scripts/popcat.ts.
+ *
+ * Nothing heavy loads with the page: the model library and weights are fetched only
+ * when the visitor sends their first question.
+ *
+ * The cat on the button is a picture if there is one in src/assets/popcat/ (closed.* and
+ * open.*, see the README there); otherwise it is the drawing below, an original SVG.
+ */
+import { Image } from 'astro:assets';
+import { popcat } from '../data/popcat';
+import { meow } from '../lib/meow';
+const { model, phoneModel, chips } = popcat;
+const { hello, download, ask } = popcat.greeting;
+const greeting = {
+  // for a first-time visitor, with a word about the download (on a computer, and on a
+  // phone, where the model is a smaller one); and without it, once the model is cached
+  first: meow([hello, download.replace('{size}', model.size), ask].filter(Boolean).join(' '), popcat.meow),
+  firstPhone: meow([hello, download.replace('{size}', phoneModel.size), ask].filter(Boolean).join(' '), popcat.meow),
+  cached: meow([hello, ask].filter(Boolean).join(' '), popcat.meow),
+};
+
+const pictures = import.meta.glob<{ default: ImageMetadata }>('../assets/popcat/*.{png,webp,jpg,jpeg,gif,avif}', { eager: true });
+const picture = (name: string) =>
+  Object.entries(pictures).find(([file]) => file.split('/').pop()!.split('.')[0] === name)?.[1].default;
+const closed = picture('closed');
+const opened = picture('open');
+---
+
+<div
+  id="popcat"
+  class:list={['pc', { 'has-pic': !!closed }]}
+  data-model={model.id}
+  data-fallback={model.fallbackId}
+  data-label={model.label}
+  data-size={model.size}
+  data-host={model.host}
+  data-phone-model={phoneModel.id}
+  data-phone-fallback={phoneModel.fallbackId}
+  data-phone-label={phoneModel.label}
+  data-phone-size={phoneModel.size}
+  data-meow-en={popcat.meow.en}
+  data-meow-zh={popcat.meow.zh}
+>
+  <section class="pc-panel" id="popcat-panel" role="dialog" aria-label="Pop Cat, a chat assistant that runs in your browser" hidden>
+    <header class="pc-head">
+      <span class="pc-title">
+        <b>Pop Cat</b>
+        <span class="pc-model" data-model-detail>{model.label}</span>
+      </span>
+      <button class="pc-x" type="button" aria-label="Close chat">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 3.5l9 9m0-9l-9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+      </button>
+    </header>
+
+    <div class="pc-log" data-log aria-live="polite">
+      <div class="pc-msg bot" data-greeting data-cached={greeting.cached} data-phone={greeting.firstPhone}>{greeting.first}</div>
+    </div>
+    <div class="pc-chips" data-chips>
+      {chips.map((c) => <button type="button" data-ask={c.ask}>{c.label}</button>)}
+    </div>
+    <form class="pc-form" data-form>
+      <textarea rows="1" placeholder="Ask about Wenjia…" aria-label="Your question" maxlength="600" data-input></textarea>
+      <button type="submit" aria-label="Send" data-send>
+        <svg class="pc-i-send" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <svg class="pc-i-stop" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="4" y="4" width="8" height="8" rx="1.5" fill="currentColor"></rect></svg>
+      </button>
+    </form>
+  </section>
+
+  <button class="pc-btn" type="button" aria-expanded="false" aria-controls="popcat-panel" aria-label="Chat with Pop Cat, a small AI model that runs in your browser">
+    {
+      closed ? (
+        <span class:list={['pc-pic', { single: !opened }]}>
+          <Image class="pc-shut" src={closed} alt="" width={128} loading="eager" draggable="false" />
+          {opened && <Image class="pc-open" src={opened} alt="" width={128} loading="eager" draggable="false" />}
+        </span>
+      ) : (
+      <svg class="pc-cat" viewBox="0 0 64 64" aria-hidden="true">
+        <g stroke="#1b2a2a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M11 30 13 9 28 19Z" fill="#f6efe2"></path>
+          <path d="M53 30 51 9 36 19Z" fill="#f6efe2"></path>
+          <ellipse cx="32" cy="37" rx="23" ry="20" fill="#f6efe2"></ellipse>
+        </g>
+        <path d="M16.5 21.5 17.3 14.5 22.5 18Z M47.5 21.5 46.7 14.5 41.5 18Z" fill="#e9a3ab"></path>
+        <g fill="#1b2a2a">
+          <circle cx="22" cy="33" r="3.4"></circle>
+          <circle cx="42" cy="33" r="3.4"></circle>
+        </g>
+        <g fill="#fff">
+          <circle cx="23.2" cy="31.8" r="1.1"></circle>
+          <circle cx="43.2" cy="31.8" r="1.1"></circle>
+        </g>
+        <path d="M6 37h8M7 43l7-1.6M58 37h-8M57 43l-7-1.6" fill="none" stroke="#1b2a2a" stroke-width="1.4" stroke-linecap="round"></path>
+        <path d="M29.6 38.4h4.8L32 41.1Z" fill="#e9a3ab" stroke="#1b2a2a" stroke-width="1" stroke-linejoin="round"></path>
+        <path class="pc-shut" d="M32 41.1v2.3M32 43.4c-1.6 2.6-4.6 2.6-6 .6M32 43.4c1.6 2.6 4.6 2.6 6 .6" fill="none" stroke="#1b2a2a" stroke-width="1.6" stroke-linecap="round"></path>
+        <g class="pc-open">
+          <ellipse cx="32" cy="48" rx="6.6" ry="7" fill="#4a2228" stroke="#1b2a2a" stroke-width="1.6"></ellipse>
+          <ellipse cx="32" cy="52.2" rx="3.9" ry="2.4" fill="#e58e9a"></ellipse>
+        </g>
+      </svg>
+      )
+    }
+    <span class="pc-hint" aria-hidden="true">Ask me about Wenjia</span>
+  </button>
+</div>
+
+<script>
+  import '../scripts/popcat';
+</script>
+
+<style is:global>
+  /* Global on purpose: the chat messages are created by script, so scoped styles would
+     not reach them. Every class starts with pc-. */
+  .pc {
+    position: fixed;
+    /* bottom-left by default; dragging it sets `left` from script */
+    left: max(1rem, env(safe-area-inset-left));
+    /* --pc-kb is the height of the on-screen keyboard, set by script while it is up */
+    bottom: calc(1rem + env(safe-area-inset-bottom) + var(--pc-kb, 0px));
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    pointer-events: none;
+  }
+  .pc > * {
+    pointer-events: auto;
+  }
+
+  /* ---- the cat ---- */
+  .pc-btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--surface);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.08),
+      0 8px 24px rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      border-color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pc-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+  .pc-btn:active {
+    transform: scale(0.94);
+  }
+  .pc-btn:focus-visible,
+  .pc-x:focus-visible,
+  .pc-chips button:focus-visible,
+  .pc-form button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .pc-cat {
+    width: 2.7rem;
+    height: 2.7rem;
+    overflow: visible;
+  }
+  /* the pop: mouth shut by default, wide open on hover, press, and while talking */
+  .pc-open {
+    display: none;
+  }
+  .pc-btn:hover .pc-open,
+  .pc-btn:active .pc-open,
+  .pc.pop .pc-open {
+    display: inline;
+  }
+  .pc-btn:hover .pc-shut,
+  .pc-btn:active .pc-shut,
+  .pc.pop .pc-shut {
+    display: none;
+  }
+  /* A picture instead of the drawing. No round button around it: the cut-out stands on
+     the bottom edge of the window, as if peeking up from below, so the straight cut at
+     its shoulders is never seen. Both frames are stacked; one is visible at a time. */
+  .pc.has-pic {
+    bottom: var(--pc-kb, 0px);
+  }
+  .pc.has-pic .pc-btn {
+    width: 4.5rem;
+    height: 4.5rem;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    /* sits a little low, and rises when pointed at */
+    transform: translateY(0.3rem);
+  }
+  .pc.has-pic .pc-btn:hover {
+    transform: translateY(0);
+  }
+  .pc.has-pic .pc-btn:active {
+    transform: translateY(0.2rem);
+  }
+  .pc.has-pic .pc-btn:focus-visible {
+    outline-offset: -2px;
+    border-radius: 0.5rem;
+  }
+  .pc-pic {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* which way the cat looks (set from script): the picture faces right; -1 turns it round */
+    transform: scaleX(var(--pc-face, 1));
+    transition: transform 0.16s ease-out;
+    /* a soft shadow that follows the cat's outline keeps a white cat visible on a pale page */
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.22));
+  }
+  .pc-pic img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: 50% 100%;
+  }
+  .pc-pic img.pc-open {
+    display: block;
+    opacity: 0;
+  }
+  .pc-btn:hover .pc-pic img.pc-open,
+  .pc-btn:active .pc-pic img.pc-open,
+  .pc.pop .pc-pic img.pc-open {
+    opacity: 1;
+  }
+  .pc-btn:hover .pc-pic img.pc-shut,
+  .pc-btn:active .pc-pic img.pc-shut,
+  .pc.pop .pc-pic img.pc-shut {
+    display: block;
+    opacity: 0;
+  }
+  /* only one frame: a small bounce stands in for the open mouth */
+  .pc-pic.single img.pc-shut {
+    opacity: 1 !important;
+    transition: transform 0.08s ease-out;
+  }
+  .pc-btn:hover .pc-pic.single img,
+  .pc.pop .pc-pic.single img {
+    transform: scale(1.12);
+  }
+  /* dragging (mouse or pen): see src/scripts/popcat.ts */
+  @media (hover: hover) and (pointer: fine) {
+    .pc-btn {
+      cursor: grab;
+    }
+  }
+  .pc-btn {
+    /* stretching and bouncing happen from the floor up */
+    transform-origin: 50% 100%;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .pc-pic img {
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+  .pc.dragging .pc-btn,
+  .pc.dragging .pc-btn:hover {
+    cursor: grabbing;
+    transition: transform 0.09s ease-out;
+  }
+  .pc.dragging .pc-hint {
+    opacity: 0 !important;
+  }
+  /* let go past an end of the window: slide back in with a little overshoot */
+  .pc.settling {
+    transition: left 0.3s cubic-bezier(0.2, 1.5, 0.4, 1);
+  }
+  /* on the right half of the window the hint goes on the other side */
+  .pc.on-right .pc-hint {
+    left: auto;
+    right: calc(100% + 0.6rem);
+  }
+  .pc-hint {
+    position: absolute;
+    left: calc(100% + 0.6rem);
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    padding: 0.3rem 0.55rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+  @media (hover: hover) {
+    .pc:not(.open) .pc-btn:hover .pc-hint,
+    .pc:not(.open) .pc-btn:focus-visible .pc-hint {
+      opacity: 1;
+    }
+  }
+
+  /* ---- the panel ---- */
+  .pc-panel {
+    display: flex;
+    flex-direction: column;
+    width: min(23.5rem, calc(100vw - 2rem));
+    /* as tall as the conversation needs, up to this. --pc-vh is the visible height of
+       the page, set by script (it shrinks when the on-screen keyboard is up); dvh covers
+       browsers before the script has run */
+    max-height: min(33rem, calc(var(--pc-vh, 100dvh) - 6.5rem - env(safe-area-inset-bottom)));
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 0.9rem;
+    box-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.08),
+      0 18px 48px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    transform-origin: bottom left;
+    animation: pc-in 0.18s ease-out;
+  }
+  .pc-panel[hidden] {
+    display: none;
+  }
+  @keyframes pc-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem) scale(0.97);
+    }
+  }
+  .pc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.35rem 0.4rem 0.35rem 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .pc-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .pc-head b {
+    flex: none;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+  /* which model this is, after the name */
+  .pc-model {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pc-x {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border: 0;
+    border-radius: 0.5rem;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .pc-x:hover {
+    color: var(--ink);
+    background: var(--accent-soft);
+  }
+
+  /* ---- conversation ---- */
+  .pc-log {
+    flex: 0 1 auto;
+    min-height: 3rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1rem 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .pc-msg {
+    max-width: 88%;
+    overflow-wrap: anywhere;
+  }
+  .pc-msg.user {
+    align-self: flex-end;
+    background: var(--accent-soft);
+    padding: 0.45rem 0.75rem;
+    border-radius: 0.9rem 0.9rem 0.25rem 0.9rem;
+  }
+  .pc-msg.bot {
+    align-self: flex-start;
+  }
+  /* "Waking up… 43%" with a thin bar, shown in place of the answer while the model loads */
+  .pc-wake {
+    width: 88%;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .pc-wake i {
+    display: block;
+    height: 0.3rem;
+    margin-top: 0.4rem;
+    background: var(--code-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  .pc-wake b {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+    border-radius: inherit;
+    transition: width 0.25s ease;
+  }
+  .pc-msg.err {
+    color: var(--accent-2);
+    font-size: 0.85rem;
+  }
+  .pc-msg code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--code-bg);
+    padding: 0.05em 0.3em;
+    border-radius: 0.25rem;
+  }
+  .pc-msg a {
+    color: var(--accent);
+  }
+  /* while the model is writing: a block cursor in the sun's orange, as on the homepage */
+  .pc-msg.live::after {
+    content: '';
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    margin-left: 0.15em;
+    vertical-align: text-bottom;
+    background: var(--accent-2);
+    animation: pc-blink 0.9s steps(2, start) infinite;
+  }
+  @keyframes pc-blink {
+    to {
+      visibility: hidden;
+    }
+  }
+  .pc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.25rem 1rem 0.7rem;
+  }
+  .pc-chips[hidden] {
+    display: none;
+  }
+  .pc-chips button {
+    border: 1px solid var(--line);
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    text-align: left;
+    padding: 0.35rem 0.65rem;
+    border-radius: 1rem;
+    cursor: pointer;
+  }
+  .pc-chips button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .pc-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    border-top: 1px solid var(--line);
+  }
+  .pc-form textarea:disabled,
+  .pc-form button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .pc-form textarea {
+    flex: 1;
+    min-width: 0;
+    resize: none;
+    max-height: 7.5rem;
+    border: 1px solid var(--line);
+    border-radius: 0.6rem;
+    background: var(--bg);
+    color: var(--ink);
+    font: inherit;
+    /* 16px keeps iOS from zooming the page when the field is focused */
+    font-size: 1rem;
+    line-height: 1.4;
+    padding: 0.55rem 0.7rem;
+  }
+  .pc-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .pc-form button {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 0.6rem;
+    background: var(--accent);
+    color: var(--bg);
+    cursor: pointer;
+  }
+  .pc-i-stop,
+  .pc.busy .pc-i-send {
+    display: none;
+  }
+  .pc.busy .pc-i-stop {
+    display: block;
+  }
+  .pc.busy .pc-form button {
+    background: var(--accent-2);
+  }
+  /* while the model is still loading there is nothing to stop yet */
+  .pc.waking .pc-form button {
+    background: var(--line);
+    color: var(--muted);
+    cursor: default;
+  }
+  .pc.waking .pc-i-stop {
+    display: none;
+  }
+  .pc.waking .pc-i-send {
+    display: block;
+  }
+
+  /* on a phone the whole thing is a tenth smaller */
+  @media (max-width: 36rem) {
+    .pc-panel,
+    .pc-btn {
+      zoom: 0.9;
+    }
+    /* ...except the text being typed: under 16px, iOS zooms the page in on focus */
+    .pc-form textarea {
+      font-size: 1.12rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pc-panel {
+      animation: none;
+    }
+    .pc-btn {
+      transition: none;
+    }
+  }
+  @media print {
+    .pc {
+      display: none;
+    }
+  }
+</style>

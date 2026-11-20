@@ -1,0 +1,63 @@
+---
+/**
+ * 中文 / EN switch for the blog. `orig` is the language shown when the reader has not
+ * chosen yet (a post's own language); leave it out on pages that list mixed posts.
+ */
+interface Props {
+  orig?: 'en' | 'zh';
+}
+const { orig } = Astro.props;
+---
+
+<div class="lang-switch" role="group" aria-label="Reading language" data-orig={orig}>
+  <button type="button" data-set-lang="zh" lang="zh-CN">中文</button>
+  <button type="button" data-set-lang="en">EN</button>
+</div>
+
+<script>
+  // One listener for every switch and "read the original" link on the page.
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element).closest<HTMLElement>('[data-set-lang]');
+    const lang = button?.dataset.setLang;
+    if (lang !== 'zh' && lang !== 'en') return;
+    document.documentElement.dataset.blogLang = lang;
+    try {
+      localStorage.setItem('blogLang', lang);
+    } catch {}
+  });
+</script>
+
+<style>
+  .lang-switch {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+  }
+  button {
+    min-width: 3.25rem;
+    min-height: 2.25rem;
+    padding: 0 0.85rem;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--muted);
+    font: 500 0.85rem/1 var(--sans);
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  button:hover {
+    color: var(--ink);
+  }
+  /* active: the chosen language, or the post's own language before any choice */
+  :global(:root[data-blog-lang='zh']) button[data-set-lang='zh'],
+  :global(:root[data-blog-lang='en']) button[data-set-lang='en'],
+  :global(:root:not([data-blog-lang])) .lang-switch[data-orig='zh'] button[data-set-lang='zh'],
+  :global(:root:not([data-blog-lang])) .lang-switch[data-orig='en'] button[data-set-lang='en'] {
+    background: var(--ink);
+    color: var(--bg);
+  }
+</style>

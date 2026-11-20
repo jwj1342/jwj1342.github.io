@@ -1,0 +1,104 @@
+---
+import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/newsreader/opsz-italic.css';
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+// Same files the @font-face rules point at; preloading starts the downloads with the
+// HTML instead of after the stylesheet has been parsed.
+import serifUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url';
+import serifItalicUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-italic.woff2?url';
+import sansUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PopCat from '../components/PopCat.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+  ogType?: 'website' | 'article';
+}
+const { title, description = site.description, lang = 'en', ogType = 'website' } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : site.title;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/images/profile.jpg', Astro.site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {[serifUrl, serifItalicUrl, sansUrl].map((href) => (
+      <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
+    ))}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/images/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon-180x180.png" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} — Blog`} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="theme-color" content="#f5f5f0" media="(prefers-color-scheme: light)" data-scheme="light" />
+    <meta name="theme-color" content="#0e1717" media="(prefers-color-scheme: dark)" data-scheme="dark" />
+    <script is:inline>
+      // Apply the saved theme before first paint; mark that the token stream may run.
+      (function () {
+        var d = document.documentElement;
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') {
+            d.dataset.theme = t;
+            // keep the browser chrome colour in step with a manually chosen theme
+            var c = t === 'dark' ? '#0e1717' : '#f5f5f0';
+            document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
+              m.removeAttribute('media');
+              m.content = c;
+            });
+          }
+        } catch (e) {}
+        // blog reading language, if the visitor picked one
+        try {
+          var l = localStorage.getItem('blogLang');
+          if (l === 'zh' || l === 'en') d.dataset.blogLang = l;
+        } catch (e) {}
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('stream-pending');
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <PopCat />
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 20;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 0.6rem 1rem;
+    border-radius: 0.4rem;
+    text-decoration: none;
+  }
+  .skip:focus {
+    top: 0.75rem;
+  }
+</style>

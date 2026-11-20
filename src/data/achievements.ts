@@ -1,0 +1,149 @@
+/**
+ * Life achievements, drawn on the Misc page as an advancement tree. This is a small
+ * preview; the plan is a fuller, interactive version later.
+ *
+ * `story` is the main line, in order: each entry is a chapter (middle school, high
+ * school, university, ...), and the achievements nested under it were unlocked from it.
+ * `sideQuests` are moments that are not part of that line.
+ *
+ * `done: false` shows the achievement as locked. A locked one with `secret: true`
+ * hides its title and description until it is done.
+ */
+import type { PixelIcon } from './pixel-icons';
+
+export interface Achievement {
+  title: string;
+  description: string;
+  /** Year it was unlocked; leave it out if you would rather not say. */
+  when?: string;
+  /** Experience this achievement is worth once unlocked (default 100). */
+  xp?: number;
+  done: boolean;
+  secret?: boolean;
+  /** One of the pixel icons in pixel-icons.ts. */
+  icon: PixelIcon;
+  children?: Achievement[];
+}
+
+export const story: Achievement[] = [
+  {
+    title: 'Hello, world',
+    description: 'Middle school: write a first program, in C.',
+    done: true,
+    icon: 'pickaxe',
+  },
+  {
+    title: 'Contestant',
+    description: 'High school: take up competitive programming for NOIP.',
+    done: true,
+    icon: 'sword',
+  },
+  {
+    title: 'Freshman',
+    description: 'Start a degree in software engineering at Henan University.',
+    when: '2021',
+    done: true,
+    icon: 'book',
+    children: [
+      {
+        title: 'Team lead',
+        description: 'National First Prize, Huawei Developer Contest.',
+        when: '2023',
+        xp: 150,
+        done: true,
+        icon: 'cup',
+      },
+      {
+        title: 'First preprint',
+        description: 'Put a first-author paper on arXiv.',
+        when: '2024',
+        done: true,
+        icon: 'scroll',
+        children: [
+          {
+            title: 'Six hundred stars',
+            description: 'An open-source project passes 600 stars on GitHub.',
+            when: '2025',
+            done: true,
+            icon: 'star',
+          },
+          {
+            title: 'Peer reviewed',
+            description: 'A first accepted paper, at ICME 2025.',
+            when: '2025',
+            done: true,
+            icon: 'axe',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: 'Graduate',
+    description: 'B.Eng., in the top 3% of the class.',
+    when: '2025',
+    xp: 200,
+    done: true,
+    icon: 'cap',
+    children: [
+      {
+        title: 'Main track',
+        description: 'A first-author paper in the EMNLP main conference.',
+        when: '2026',
+        xp: 200,
+        done: true,
+        icon: 'gem',
+        children: [
+          {
+            title: 'Budapest',
+            description: 'Travel to Budapest for EMNLP.',
+            when: '2026',
+            done: true,
+            icon: 'map',
+          },
+        ],
+      },
+      {
+        title: 'San Diego',
+        description: 'Travel to San Diego, USA, for ACL.',
+        when: '2026',
+        done: true,
+        icon: 'map',
+      },
+    ],
+  },
+  {
+    title: 'Doctor',
+    description: 'Finish a Ph.D.',
+    done: false,
+    icon: 'cap',
+  },
+];
+
+export const sideQuests: Achievement[] = [
+  {
+    title: 'In the news',
+    description: "Featured by Henan University's official WeChat account.",
+    done: true,
+    icon: 'news',
+  },
+  {
+    title: 'On stage',
+    description: 'Invited to give a talk.',
+    done: true,
+    icon: 'mic',
+  },
+  {
+    title: 'First concert',
+    description: 'See a live concert for the first time.',
+    done: true,
+    icon: 'note',
+  },
+  {
+    title: 'Secret',
+    description: 'Not unlocked yet.',
+    done: false,
+    secret: true,
+    icon: 'gem',
+  },
+];

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C · Gallery — Wenjia Jiang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0f0e; --ink:#f2efe9; --muted:#96918a; --line:#2a2927; --accent:#d8ff6a; --figure:#f3f1ec; --chip:#1b1b19;
+  --serif:"Instrument Serif","Songti SC","Noto Serif SC",Georgia,serif;
+  --sans:"Geist","PingFang SC","Noto Sans SC",system-ui,sans-serif;
+  --gutter:clamp(1.1rem,4.5vw,3.5rem);
+}
+@media (prefers-color-scheme:light){:root:not([data-theme=dark]){
+  --bg:#f4f2ed; --ink:#141412; --muted:#6c6862; --line:#dcd8cf; --accent:#3b5a00; --figure:#ffffff; --chip:#eae6dd;
+}}
+:root[data-theme=light]{
+  --bg:#f4f2ed; --ink:#141412; --muted:#6c6862; --line:#dcd8cf; --accent:#3b5a00; --figure:#ffffff; --chip:#eae6dd;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{padding:0 var(--gutter);max-width:90rem;margin:0 auto}
+.k{font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+header.site{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px)}
+.nav{display:flex;justify-content:space-between;align-items:center;min-height:4rem;position:relative}
+.brand{font-family:var(--serif);font-size:1.5rem;line-height:1}
+.nav ul{display:flex;gap:clamp(1rem,2.4vw,2.25rem);list-style:none;margin:0;padding:0;font-size:.85rem}
+.nav ul a{display:inline-block;padding:.8rem 0;color:var(--muted)}
+.nav ul a:hover,.nav ul a[aria-current]{color:var(--ink)}
+.nav ul a[aria-current]{box-shadow:inset 0 -1px var(--accent)}
+.menu-btn{display:none;height:2.75rem;padding:0 .2rem;border:0;background:none;color:inherit;font:inherit;font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+@media (max-width:42rem){
+  .menu-btn{display:block}
+  .nav ul{display:none;position:fixed;inset:4rem 0 0 0;background:var(--bg);flex-direction:column;gap:0;padding:1rem var(--gutter)}
+  .nav ul.open{display:flex}
+  .nav ul a{display:block;font-family:var(--serif);font-size:2.4rem;line-height:1.1;padding:.7rem 0;color:var(--ink);border-bottom:1px solid var(--line);box-shadow:none}
+}
+
+.hero{padding-block:clamp(2rem,7vw,5.5rem) clamp(2rem,5vw,3.5rem)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(3.4rem,15vw,12rem);line-height:.88;letter-spacing:-.03em;margin:.5rem 0 0}
+h1 em{font-style:italic;color:var(--accent)}
+.sub{display:grid;grid-template-columns:1fr;gap:1.5rem;margin-top:clamp(1.75rem,4vw,3rem);border-top:1px solid var(--line);padding-top:1.5rem}
+.sub p{margin:0;font-size:clamp(1.05rem,1.6vw,1.3rem);line-height:1.5;max-width:34em}
+.sub p a{border-bottom:1px solid var(--muted)}
+.me{display:flex;gap:1rem;align-items:center}
+.me img{width:4.25rem;height:4.25rem;border-radius:50%;object-fit:cover;object-position:50% 20%;background:var(--figure);flex-shrink:0}
+.me div{font-size:.9rem;color:var(--muted);line-height:1.45}
+.me b{display:block;color:var(--ink);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chips a{display:inline-flex;align-items:center;min-height:2.75rem;padding:0 1.05rem;border-radius:999px;background:var(--chip);font-size:.88rem}
+.chips a:hover{background:var(--accent);color:var(--bg)}
+@media (min-width:56rem){.sub{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:4rem;align-items:start}.side{display:grid;gap:1.5rem}}
+.side{display:grid;gap:1.25rem}
+
+/* photo rail */
+.rail{display:flex;gap:.6rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--gutter) .5rem;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.rail::-webkit-scrollbar{display:none}
+.rail div{flex:0 0 auto;height:clamp(13rem,34vw,26rem);border-radius:.4rem;scroll-snap-align:start}
+.rail div:nth-child(1){aspect-ratio:3/4;background:linear-gradient(170deg,#7f95a3,#27353f)}
+.rail div:nth-child(2){aspect-ratio:3/2;background:linear-gradient(140deg,#d9b382,#7a4a22)}
+.rail div:nth-child(3){aspect-ratio:1;background:linear-gradient(200deg,#9fb38f,#34492f)}
+.rail div:nth-child(4){aspect-ratio:3/4;background:linear-gradient(120deg,#c79aa8,#5a2f43)}
+.rail div:nth-child(5){aspect-ratio:3/2;background:linear-gradient(160deg,#b9b1d6,#3d3763)}
+.railcap{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0 0}
+.railcap a{padding:.6rem 0;font-size:.9rem;color:var(--accent)}
+
+section.wrap{padding-top:clamp(3rem,7vw,6rem)}
+.head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:.9rem}
+.head h2{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,5vw,3.5rem);line-height:1;margin:0;letter-spacing:-.015em}
+.head a{font-size:.9rem;color:var(--accent);padding:.5rem 0;white-space:nowrap}
+
+.row{display:grid;grid-template-columns:1fr;gap:.9rem;padding:1.5rem 0;border-bottom:1px solid var(--line)}
+.row .n{font-family:var(--serif);font-style:italic;font-size:1.25rem;color:var(--muted)}
+.row h3{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,3vw,2.3rem);line-height:1.12;margin:0 0 .5rem;letter-spacing:-.01em}
+.row p{margin:0 0 .6rem;color:var(--muted);max-width:38em;font-size:.95rem}
+.row .v{color:var(--accent);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase}
+.row .l{display:flex;gap:1.25rem;font-size:.88rem}
+.row .l a{padding:.45rem 0;border-bottom:1px solid var(--line)}
+.row figure{margin:0;background:var(--figure);border-radius:.4rem;overflow:hidden;aspect-ratio:16/9}
+.row figure img{width:100%;height:100%;object-fit:contain;padding:.5rem}
+@media (min-width:48rem){.row{grid-template-columns:3rem minmax(0,1fr) clamp(13rem,24vw,20rem);gap:2rem;align-items:start;padding:2.25rem 0}}
+
+.two{display:grid;grid-template-columns:1fr;gap:0}
+@media (min-width:56rem){.two{grid-template-columns:1fr 1fr;gap:4rem}}
+.post{display:block;padding:1.15rem 0;border-bottom:1px solid var(--line)}
+.post .t{display:block;font-family:var(--serif);font-size:clamp(1.4rem,2.4vw,1.75rem);line-height:1.2}
+.post .k{display:block;margin-top:.35rem}
+.news time{color:var(--accent);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:.35rem}
+.news p,.aw p{margin:0;font-family:var(--serif);font-size:clamp(1.3rem,2.2vw,1.6rem);line-height:1.25}
+.news,.aw{padding:1.15rem 0;border-bottom:1px solid var(--line)}
+.aw span{display:block;color:var(--muted);font-size:.9rem;margin-top:.35rem}
+.note{font-size:.75rem;color:var(--muted);margin:.75rem 0 0}
+
+footer{padding:clamp(3rem,7vw,5rem) 0 2.5rem}
+footer .big{font-family:var(--serif);font-size:clamp(2.2rem,8vw,6rem);line-height:1;letter-spacing:-.02em;display:block;margin-bottom:1.5rem}
+footer .big:hover{color:var(--accent)}
+footer .b{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 1rem;border-top:1px solid var(--line);padding-top:1rem}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap nav">
+  <a class="brand" href="#">Wenjia</a>
+  <button class="menu-btn" onclick="document.querySelector('.nav ul').classList.toggle('open')">Menu</button>
+  <ul><li><a href="#" aria-current="page">Index</a></li><li><a href="#">Publications</a></li><li><a href="#">Blog</a></li><li><a href="#">Photos</a></li><li><a href="#">CV</a></li></ul>
+</div></header>
+
+<main>
+  <div class="wrap hero">
+    <span class="k">Research · Writing · Photos</span>
+    <h1>Wenjia <em>Jiang</em></h1>
+    <div class="sub">
+      <p>I build LLM-based agents. Currently a Research Engineer at Singapore Management University, advised by <a href="#">David Lo</a>, working on large language models and multimodal learning. Joining the University of Alberta for a Ph.D. in Fall 2026.</p>
+      <div class="side">
+        <div class="me"><img src="/images/profile.jpg" alt="Portrait of Wenjia Jiang"><div><b>Singapore</b>Research Engineer, SMU</div></div>
+        <div class="chips"><a href="#">Email</a><a href="#">Scholar</a><a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">CV ↗</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail" aria-label="Recent photos"><div></div><div></div><div></div><div></div><div></div></div>
+  <div class="wrap railcap"><span class="k">Recent photos · placeholders</span><a href="#">Photo wall →</a></div>
+
+  <section class="wrap"><div class="head"><h2>Research</h2><a href="#">All publications →</a></div>
+    <article class="row"><span class="n">01</span><div><span class="v">arXiv 2025</span><h3>AppAgentX: Evolving GUI Agents as Proficient Smartphone Users</h3><p>An evolutionary framework for GUI agents that enhances operational efficiency through action evolution.</p><div class="l"><a href="#">Project</a><a href="#">PDF</a><a href="#">Code</a></div></div><figure><img src="/images/paper_image/appagentx.png" alt=""></figure></article>
+    <article class="row"><span class="n">02</span><div><span class="v">ACM MM 2025</span><h3>Learning to Be A Doctor: Searching for Effective Medical Agent Architectures</h3><p>Searching AI agent architectures capable of medical reasoning and diagnosis in medical scenarios.</p><div class="l"><a href="#">PDF</a></div></div><figure><img src="/images/paper_image/doctor.png" alt=""></figure></article>
+    <article class="row"><span class="n">03</span><div><span class="v">ACL 2026 Findings</span><h3>SQLAgent: Learning to Explore Before Generating as a Data Engineer</h3><p>A two-stage LLM-based framework that decouples knowledge acquisition from query generation.</p><div class="l"><a href="#">PDF</a></div></div><figure><img src="/images/paper_image/sqlagent.png" alt=""></figure></article>
+    <article class="row"><span class="n">04</span><div><span class="v">ICME 2026</span><h3>Auto-Slides: An Interactive Multi-Agent System for Research Presentations</h3><p>Converts research papers into pedagogically structured, multimodal slides with an interactive editor.</p><div class="l"><a href="#">Project</a><a href="#">PDF</a><a href="#">Code</a></div></div><figure><img src="/images/paper_image/autoslides.png" alt=""></figure></article>
+  </section>
+
+  <section class="wrap"><div class="two">
+    <div><div class="head"><h2>Writing</h2><a href="#">All posts →</a></div>
+      <a class="post" href="#"><span class="t">What a year of building GUI agents taught me</span><span class="k">Sample · EN</span></a>
+      <a class="post" href="#"><span class="t">从新加坡到埃德蒙顿：读博前的一些想法</span><span class="k">示例 · 中文</span></a>
+      <a class="post" href="#"><span class="t">Notes on spending 150M tokens a month</span><span class="k">Sample · EN</span></a>
+      <p class="note">Post titles are placeholders.</p></div>
+    <div><div class="head"><h2>News &amp; awards</h2></div>
+      <div class="news"><time>Fall 2026</time><p>Joining the University of Alberta for a Ph.D. with Prof. Zhouyang.</p></div>
+      <div class="aw"><p>Huawei Developer Contest — National First Prize</p><span>Team leader · 2023</span></div>
+      <div class="aw"><p>Undergraduate honors &amp; scholarships</p><span>Henan University · 2021–2025</span></div></div>
+  </div></section>
+</main>
+<footer><div class="wrap"><a class="big" href="#">Say hello →</a><div class="b k"><span>© 2026 Wenjia Jiang</span><span>wenjia.me</span></div></div></footer>
+</body>
+</html>

@@ -1,40 +1,47 @@
 {
-  "name": "academic-pages",
-  "version": "0.8.1.1",
-  "description": "Academic Pages Mistakes Jekyll theme npm build scripts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/academicpages/academicpages.github.io"
-  },
-  "keywords": [
-    "jekyll",
-    "theme",
-    "minimal"
-  ],
-  "contributors": [
-    "Michael Rose",
-    "Robert Zupko"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/academicpages/academicpages.github.io/issues"
-  },
-  "homepage": "https://github.com/academicpages/academicpages.github.io",
+  "name": "wenjia-me",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
   "engines": {
-    "node": ">= 0.10.0"
-  },
-  "dependencies": {
-    "fitvids": "^2.1.1",
-    "jquery": "^3.7.1",
-    "jquery-smooth-scroll": "^2.2.0"
-  },
-  "devDependencies": {
-    "onchange": "^7.1.0",
-    "uglify-js": "^3.17.4"
+    "node": ">=22.12.0"
   },
   "scripts": {
-    "uglify": "uglifyjs node_modules/jquery/dist/jquery.min.js node_modules/fitvids/dist/fitvids.min.js node_modules/jquery-smooth-scroll/jquery.smooth-scroll.min.js assets/js/plugins/jquery.greedy-navigation.js assets/js/_main.js -c -m -o assets/js/main.min.js",
-    "watch:js": "onchange \"assets/js/**/*.js\" -e \"assets/js/main.min.js\" -- npm run build:js",
-    "build:js": "npm run uglify"
+    "dev": "astro dev",
+    "build": "astro build",
+    "check": "astro check",
+    "preview": "astro preview",
+    "deploy": "astro build && wrangler deploy",
+    "translate": "node scripts/translate.mjs",
+    "photos:add": "node scripts/photos.mjs",
+    "photos:remove": "node scripts/photos.mjs --remove",
+    "model:mirror": "node scripts/mirror-model.mjs"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.8",
+    "@astrojs/mdx": "^8.1.5",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource-variable/pixelify-sans": "^5.3.0",
+    "@mlc-ai/web-llm": "^0.2.88",
+    "astro": "^7.4.11",
+    "katex": "^0.19.1",
+    "photoswipe": "^5.4.4",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/d3-geo": "^3.1.1",
+    "@types/topojson-client": "^3.1.5",
+    "d3-geo": "^3.1.2",
+    "exifr": "^7.1.3",
+    "sharp": "^0.35.5",
+    "topojson-client": "^3.1.0",
+    "typescript": "^6.0.3",
+    "world-atlas": "^2.0.2",
+    "wrangler": "^4.160.1"
   }
 }

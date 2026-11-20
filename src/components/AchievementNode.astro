@@ -1,0 +1,181 @@
+---
+import type { Achievement } from '../data/achievements';
+import PixelIcon from './PixelIcon.astro';
+
+interface Props {
+  node: Achievement;
+}
+const { node } = Astro.props;
+const hidden = !node.done && node.secret;
+---
+
+<li class:list={{ done: node.done, locked: !node.done }}>
+  <div class="row">
+    <span class="tile" aria-hidden="true">
+      {
+        hidden ? (
+          <span class="q">?</span>
+        ) : (
+          <PixelIcon name={node.icon} />
+        )
+      }
+    </span>
+    <span class="text">
+      <b>{hidden ? '???' : node.title}</b>
+      <span class="desc">{hidden ? 'Keep playing to find out.' : node.description}</span>
+    </span>
+    <span class="state">
+      {node.done ? (node.when ?? 'done') : 'locked'}
+      <span class="sr-only">{node.done ? ' (unlocked)' : ''}</span>
+    </span>
+  </div>
+  {
+    node.children && node.children.length > 0 && (
+      <ul>
+        {node.children.map((child) => (
+          <Astro.self node={child} />
+        ))}
+      </ul>
+    )
+  }
+</li>
+
+<style>
+  /* A blocky, pixel-game look: square tiles with hard bevelled edges, thick square
+     connectors and a pixel typeface. Everything is drawn in CSS; no game assets. */
+  li {
+    --tile: 2.75rem;
+    --elbow: 1.4rem;
+    --px: 3px; /* one "pixel" */
+    position: relative;
+    list-style: none;
+  }
+  ul {
+    margin: 0;
+    /* children hang from the middle of the parent's tile */
+    padding: 0 0 0 calc(var(--tile) / 2 + var(--elbow));
+  }
+  .row {
+    display: grid;
+    grid-template-columns: var(--tile) minmax(0, 1fr) auto;
+    /* the tile stays at the top of its row, so the connectors meet it at the same
+       height however many lines the text wraps to */
+    align-items: start;
+    column-gap: 0.9rem;
+    padding: 0.45rem 0;
+    position: relative;
+  }
+  /* connectors: a vertical line down the left of each child list, and an elbow into
+     each child's tile */
+  ul > :global(li)::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--elbow));
+    top: 0;
+    bottom: 0;
+    width: var(--px);
+    background: var(--wire);
+  }
+  ul > :global(li:last-child)::before {
+    bottom: auto;
+    height: calc(0.45rem + var(--tile) / 2 + var(--px) / 2);
+  }
+  ul > :global(li) > .row::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--elbow));
+    top: calc(0.45rem + var(--tile) / 2 - var(--px) / 2);
+    width: var(--elbow);
+    height: var(--px);
+    background: var(--wire);
+  }
+
+  .tile {
+    display: grid;
+    place-items: center;
+    width: var(--tile);
+    height: var(--tile);
+    background: var(--slot);
+    /* dark outline, then a light top-left and dark bottom-right edge: a raised slot */
+    box-shadow:
+      0 0 0 var(--px) var(--outline),
+      inset var(--px) var(--px) 0 rgba(255, 255, 255, 0.45),
+      inset calc(-1 * var(--px)) calc(-1 * var(--px)) 0 rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+  }
+  .tile :global(svg) {
+    width: calc(var(--tile) - 4 * var(--px));
+    height: calc(var(--tile) - 4 * var(--px));
+    image-rendering: pixelated;
+  }
+  /* locked: a dull, sunken slot with the icon greyed out */
+  .locked .tile {
+    background: var(--slot-off);
+    color: var(--muted);
+    box-shadow:
+      0 0 0 var(--px) var(--outline),
+      inset var(--px) var(--px) 0 rgba(0, 0, 0, 0.25),
+      inset calc(-1 * var(--px)) calc(-1 * var(--px)) 0 rgba(255, 255, 255, 0.12);
+  }
+  .locked .tile :global(svg) {
+    filter: grayscale(1) brightness(0.75);
+    opacity: 0.55;
+  }
+  .q {
+    font-family: var(--pixel);
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+  .text {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+    min-height: var(--tile);
+    align-content: center;
+  }
+  b {
+    font-family: var(--pixel);
+    font-weight: 600;
+    font-size: 1.12rem;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+    color: var(--board-ink, inherit);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  }
+  .desc {
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--board-muted, var(--muted));
+  }
+  .locked b {
+    color: var(--board-muted, var(--muted));
+  }
+  .locked .desc {
+    opacity: 0.75;
+  }
+  /* years stay in the regular mono face: the pixel digits are too easy to misread */
+  .state {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--board-year, var(--accent-2));
+    white-space: nowrap;
+    line-height: var(--tile);
+  }
+  .locked .state {
+    color: var(--board-muted, var(--muted));
+  }
+  @media (max-width: 36rem) {
+    li {
+      --tile: 2.4rem;
+      --elbow: 0.95rem;
+    }
+    .row {
+      column-gap: 0.7rem;
+    }
+    b {
+      font-size: 1.02rem;
+    }
+  }
+</style>

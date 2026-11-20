@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wenjia-me",
+  "compatibility_date": "2026-11-01",
+  // The site's own address. Cloudflare creates the DNS record and certificate for it.
+  // (www.wenjia.me is redirected here by a redirect rule on the zone, not by this Worker.)
+  "routes": [{ "pattern": "wenjia.me", "custom_domain": true }],
+  // Keep the wenjia-me.<account>.workers.dev address working as a second way in.
+  "workers_dev": true,
+  // Lets `npx wrangler versions upload --preview-alias <name>` publish a try-out copy at
+  // <name>-wenjia-me.<account>.workers.dev without touching the live site.
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

@@ -1,0 +1,20 @@
+# Old Jekyll URLs -> new site. Static rules first, splats last.
+/about/ / 301
+/about.html / 301
+/cv/ /files/CV_Wenjia_Jiang.pdf 301
+/resume /files/CV_Wenjia_Jiang.pdf 301
+/files/CV_Wenjia%20Jiang.pdf /files/CV_Wenjia_Jiang.pdf 301
+/projects/ /publications/ 301
+/publication/2024-12-11-skeleton-guided-spatial-temporal /publications/#skeleton-guided-spatial-temporal 301
+/publication/2024-12-11-skeleton-guided-spatial-temporal.html /publications/#skeleton-guided-spatial-temporal 301
+/publication/2025-03-04-appagentx-evolving-gui /publications/#appagentx 301
+/publication/2025-03-04-appagentx-evolving-gui.html /publications/#appagentx 301
+/publication/2025-04-16-adaptive-mobile-agent /publications/#adaptive-mobile-agent 301
+/publication/2025-04-16-adaptive-mobile-agent.html /publications/#adaptive-mobile-agent 301
+/publication/2025-04-07-learning-to-be-doctor /publications/#learning-to-be-doctor 301
+/publication/2025-04-07-learning-to-be-doctor.html /publications/#learning-to-be-doctor 301
+/publication/2025-09-18-AutoSlides.md /publications/#auto-slides 301
+/publication/2025-09-18-AutoSlides.md.html /publications/#auto-slides 301
+/awards/ / 301
+/awards/* / 301
+/publication/* /publications/ 301

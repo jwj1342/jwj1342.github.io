@@ -1,0 +1,25 @@
+---
+/** Draws one of the hand-made pixel icons as crisp SVG squares. */
+import { ICONS, PALETTE, type PixelIcon } from '../data/pixel-icons';
+
+interface Props {
+  name: PixelIcon;
+}
+const rows = ICONS[Astro.props.name];
+
+// Merge neighbouring pixels of one colour in a row into a single rectangle.
+const rects: { x: number; y: number; w: number; fill: string }[] = [];
+rows.forEach((row, y) => {
+  for (let x = 0; x < row.length; ) {
+    const ch = row[x];
+    let w = 1;
+    while (x + w < row.length && row[x + w] === ch) w++;
+    if (ch !== '.' && PALETTE[ch]) rects.push({ x, y, w, fill: PALETTE[ch] });
+    x += w;
+  }
+});
+---
+
+<svg viewBox="0 0 14 14" shape-rendering="crispEdges" aria-hidden="true">
+  {rects.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" fill={r.fill} />)}
+</svg>

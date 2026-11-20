@@ -1,0 +1,50 @@
+[
+  {
+    "id": "806f1bcec4c9",
+    "width": 800,
+    "height": 533,
+    "thumb": "t/806f1bcec4c9.webp",
+    "full": "l/806f1bcec4c9.webp",
+    "fullWidth": 2400,
+    "fullHeight": 1600,
+    "color": "#a89878",
+    "title": "Placeholder",
+    "year": 2026
+  },
+  {
+    "id": "d2ce2d9edebd",
+    "width": 800,
+    "height": 1000,
+    "thumb": "t/d2ce2d9edebd.webp",
+    "full": "l/d2ce2d9edebd.webp",
+    "fullWidth": 1920,
+    "fullHeight": 2400,
+    "color": "#687888",
+    "title": "Placeholder",
+    "year": 2026
+  },
+  {
+    "id": "1e49f9bb9b66",
+    "width": 800,
+    "height": 450,
+    "thumb": "t/1e49f9bb9b66.webp",
+    "full": "l/1e49f9bb9b66.webp",
+    "fullWidth": 2400,
+    "fullHeight": 1350,
+    "color": "#b87868",
+    "title": "Placeholder",
+    "year": 2025
+  },
+  {
+    "id": "0ec02b7317cd",
+    "width": 800,
+    "height": 800,
+    "thumb": "t/0ec02b7317cd.webp",
+    "full": "l/0ec02b7317cd.webp",
+    "fullWidth": 2400,
+    "fullHeight": 2400,
+    "color": "#889878",
+    "title": "Placeholder",
+    "year": 2025
+  }
+]

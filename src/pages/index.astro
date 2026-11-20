@@ -1,0 +1,567 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import HomeSection from '../components/HomeSection.astro';
+import PubLinks from '../components/PubLinks.astro';
+import Career from '../components/Career.astro';
+import profile from '../assets/profile.jpg';
+import { site } from '../data/site';
+
+// Icon for each tool, keyed by the object name in its call (email, scholar, ...).
+// `fill` icons are solid glyphs; the others are drawn as outlines.
+const toolIcons: Record<string, { d: string; fill?: boolean }> = {
+  email: { d: 'M4 6h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1zm-.5 1.2L12 13l8.5-5.8' },
+  scholar: {
+    fill: true,
+    d: 'M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z',
+  },
+  github: {
+    fill: true,
+    d: 'M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.1.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.56 9.56 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z',
+  },
+  linkedin: {
+    fill: true,
+    d: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z',
+  },
+  cv: { d: 'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h4' },
+};
+
+// The contact links, written as the tool calls an agent would make.
+const tools = [
+  { label: 'Email', call: 'email.compose()', href: `mailto:${site.email}`, external: false },
+  ...site.links.map((l) => ({ ...l, external: true })),
+  { label: 'CV', call: 'cv.read()', href: site.cv, external: true },
+];
+
+const featured = (await getCollection('publications', ({ data }) => data.featured)).sort(
+  (a, b) => a.data.featuredOrder - b.data.featuredOrder,
+);
+---
+
+<Base>
+  {/* A soft wash of colour behind the top of the page, in the greens of Monet's lily
+      pads and willows with a touch of lily pink. Delete this element (and the .wash
+      rules) to go back to a plain background. */}
+  <div class="wash" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-top">
+        <div class="portrait">
+          <Image
+            src={profile}
+            alt="Portrait of Wenjia Jiang"
+            width={256}
+            widths={[128, 256]}
+            sizes="7rem"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+        {/* Decorative: the "next-token distribution" the headline is sampled from. */}
+        <div class="sampler" data-sampler aria-hidden="true">
+          <div class="bars">{Array.from({ length: 14 }).map(() => <i />)}</div>
+          <span class="readout"><span data-tk>&nbsp;</span><span data-p /></span>
+        </div>
+      </div>
+      <h1 data-stream data-stream-speed="98">
+        {site.headline.lead} <em>{site.headline.emphasis}</em>
+      </h1>
+      <p class="lede" data-stream data-stream-speed="33">
+        I'm Wenjia Jiang, an incoming Ph.D. student at the University of Alberta, advised by{' '}
+        <a href="https://homepage.zhouyang.me/" target="_blank" rel="noopener">Zhou Yang</a>. I'm currently a
+        Research Engineer at Singapore Management University, working with{' '}
+        <a href="http://www.mysmu.edu/faculty/davidlo/" target="_blank" rel="noopener">David Lo</a> on
+        LLM-based agents.
+      </p>
+      <div class="tools">
+        {
+          tools.map((t) => {
+            const [object, ...rest] = t.call.split('.');
+            return (
+              <a
+                class="tool"
+                data-tool
+                data-call={t.call}
+                href={t.href}
+                aria-label={t.label}
+                target={t.external ? '_blank' : undefined}
+                rel={t.external ? 'noopener me' : undefined}
+              >
+                {toolIcons[object] && (
+                  <svg
+                    class="icon"
+                    viewBox="0 0 24 24"
+                    fill={toolIcons[object].fill ? 'currentColor' : 'none'}
+                    stroke={toolIcons[object].fill ? 'none' : 'currentColor'}
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d={toolIcons[object].d} />
+                  </svg>
+                )}
+                <span class="fn" aria-hidden="true">
+                  <b>{object}</b>.{rest.join('.')}
+                </span>
+              </a>
+            );
+          })
+        }
+      </div>
+    </div>
+
+    <HomeSection title="Selected research" id="research">
+      {
+        featured.map((pub) => (
+          <article class="project">
+            {pub.data.image && (
+              <figure>
+                <img
+                  src={pub.data.image}
+                  alt=""
+                  width={pub.data.imageWidth}
+                  height={pub.data.imageHeight}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            )}
+            <div>
+              <span class:list={['badge', { quiet: pub.data.preprint }]}>{pub.data.badge}</span>
+              <h3>
+                <a href={`/publications/#${pub.id}`}>{pub.data.title}</a>
+              </h3>
+              <PubLinks links={pub.data.links} doi={pub.data.doi} />
+            </div>
+          </article>
+        ))
+      }
+      <a class="more" href="/publications/">All publications →</a>
+    </HomeSection>
+
+    <HomeSection title="Career" id="career">
+      <Career />
+    </HomeSection>
+  </div>
+</Base>
+
+<script>
+  import '../scripts/token-stream';
+</script>
+
+<style>
+  .wash {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: clamp(15rem, 36vw, 23rem);
+    pointer-events: none;
+    opacity: 0.55;
+    /* colours sampled from "Impression, Sunrise": harbour teal on both sides, and the
+       orange sun glowing through the mist near the chart */
+    background:
+      radial-gradient(55% 120% at 8% 0%, rgba(90, 120, 118, 0.6), transparent 72%),
+      radial-gradient(45% 110% at 100% 0%, rgba(51, 88, 85, 0.45), transparent 72%),
+      radial-gradient(20% 70% at 70% 8%, rgba(221, 96, 60, 0.38), transparent 70%);
+    /* strongest behind the avatar and chart, gone by the time the headline starts */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.6) 40%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.6) 40%, transparent 100%);
+  }
+  :global(:root[data-theme='dark']) .wash {
+    opacity: 0.38;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .wash {
+      opacity: 0.38;
+    }
+  }
+  .hero {
+    position: relative;
+    padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.5rem, 7.5vw, 4.75rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    margin: 0 0 1.5rem;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent-2);
+    /* keep the emphasised phrase together on one line */
+    white-space: nowrap;
+  }
+  .lede {
+    font-family: var(--serif);
+    font-size: clamp(1.15rem, 2.1vw, 1.4rem);
+    line-height: 1.5;
+    max-width: 36em;
+    margin: 0 0 1.75rem;
+  }
+  /* links inside the intro must read as links at a glance */
+  .lede a {
+    font-weight: 600;
+    text-decoration-line: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.22em;
+  }
+  .lede a:hover {
+    color: var(--accent);
+  }
+  /* while a link's text is still noise, its underline stays hidden */
+  .lede a {
+    transition: text-decoration-color 0.3s ease;
+  }
+  :global(.stream-ready) .lede a:not(:global(.resolved)) {
+    text-decoration-color: transparent;
+  }
+  /* ---- contact links, written as agent tool calls ---- */
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 2.75rem;
+    padding: 0 0.9rem 0 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    font-family: var(--mono);
+    font-size: 0.84rem;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      border-color 0.25s ease,
+      background-color 0.25s ease;
+  }
+  .tool b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .tool:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .tool:hover b {
+    color: var(--accent);
+  }
+  /* The icon doubles as a status light: dim while the text is still being generated,
+     full strength once the tool has been "called". Without the script it stays full. */
+  .tool .icon {
+    width: 1.05rem;
+    height: 1.05rem;
+    flex-shrink: 0;
+    color: var(--ink);
+  }
+  .tool .icon,
+  .tool .fn {
+    transition: opacity 0.25s ease;
+  }
+  /* Before a call has been generated it is raw model output: plain <object.method()/>
+     text, drawn by the script over the (still invisible) button so nothing moves when
+     the button appears. */
+  .tool {
+    position: relative;
+  }
+  :global(.stream-ready) .tool:not(:global(.called)):not(:global(.calling)) {
+    border-color: transparent;
+    background: transparent;
+    /* entering this state must be instant, or the finished button flashes on load */
+    transition: none;
+  }
+  :global(.stream-ready) .tool:not(:global(.called)):not(:global(.calling)) > * {
+    transition: none;
+  }
+  /* until the script has taken over, keep the buttons out of sight (same fallback as
+     the text: they appear by themselves if the script never runs) */
+  :global(.stream-pending) .tool {
+    opacity: 0;
+    animation: stream-fallback 0s 2.5s forwards;
+  }
+  :global(.stream-ready) .tool:not(:global(.called)):not(:global(.calling)) > .icon,
+  :global(.stream-ready) .tool:not(:global(.called)):not(:global(.calling)) > .fn {
+    opacity: 0;
+  }
+  .tool :global(.raw) {
+    position: absolute;
+    left: 0.35rem;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    color: var(--ink);
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .tool:global(.called) :global(.raw),
+  .tool:global(.calling) :global(.raw) {
+    opacity: 0;
+  }
+  .tool:hover .icon {
+    color: var(--accent);
+    opacity: 1;
+  }
+  .tool:global(.calling) {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .tool:global(.calling) .icon {
+    color: var(--accent);
+  }
+
+  /* phones: one call per line */
+  @media (max-width: 36rem) {
+    .tools {
+      flex-direction: column;
+      align-items: center;
+    }
+    .tool {
+      width: min(100%, 15rem);
+      justify-content: center;
+    }
+    /* the raw <call/> text is centred over the button as well */
+    .tool :global(.raw) {
+      left: 0;
+      right: 0;
+      justify-content: center;
+    }
+  }
+
+  /* Small round avatar above the headline, at every screen size */
+  .portrait {
+    flex-shrink: 0;
+    width: clamp(5.5rem, 12vw, 7rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--line);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ---- next-token distribution chart ---- */
+  .sampler {
+    display: grid;
+    justify-items: end;
+    gap: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    line-height: 1.2;
+    color: var(--muted);
+    /* shown only once the stream script is running */
+    visibility: hidden;
+  }
+  :global(.stream-ready) .sampler {
+    visibility: visible;
+  }
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    width: clamp(8rem, 24vw, 14rem);
+    height: clamp(2.8rem, 7vw, 4.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+  .bars i {
+    flex: 1;
+    height: 6%;
+    background: var(--line);
+    border-radius: 2px 2px 0 0;
+    /* a slight overshoot makes the bars feel springy */
+    transition:
+      height 0.11s cubic-bezier(0.3, 1.6, 0.6, 1),
+      background-color 0.1s ease;
+  }
+  .bars i:global(.pick) {
+    background: var(--accent-2);
+  }
+  /* the runner-up candidates get a hint of colour */
+  .bars i:global(.near) {
+    background: color-mix(in srgb, var(--accent-2) 35%, var(--line));
+  }
+  .readout {
+    display: flex;
+    gap: 0.7em;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .readout [data-tk] {
+    color: var(--ink);
+    max-width: 9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* line from the sampled bar to the token it produced (drawn by the script) */
+  .hero :global(.sampler-line) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+  }
+  .hero :global(.sampler-line.idle) {
+    opacity: 0;
+    transition: opacity 0.7s ease;
+  }
+  .hero :global(.sampler-line path) {
+    fill: none;
+    stroke: var(--accent-2);
+    stroke-width: 1;
+    opacity: 0.55;
+  }
+  .hero :global(.sampler-line circle) {
+    fill: var(--accent-2);
+  }
+
+  /* ---- selected research ---- */
+  .project {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .project:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .project figure {
+    margin: 0;
+    background: var(--figure);
+    border: 1px solid var(--line);
+    border-radius: 0.6rem;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+  }
+  .project figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.4rem;
+  }
+  .project .badge {
+    margin-bottom: 0.55rem;
+  }
+  .project h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(1.2rem, 2vw, 1.4rem);
+    line-height: 1.3;
+    margin: 0 0 0.9rem;
+    letter-spacing: -0.005em;
+  }
+  .project h3 a {
+    text-decoration: none;
+  }
+  .project h3 a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.18em;
+  }
+  @media (min-width: 36rem) {
+    .project {
+      grid-template-columns: 13.5rem minmax(0, 1fr);
+      gap: 1.75rem;
+      align-items: start;
+    }
+  }
+</style>
+
+<style is:global>
+/* ---- token stream ---- */
+/* Before the script has wrapped tokens, keep the text hidden; if the script never
+   runs, the fallback animation reveals it after 2.5s. */
+.stream-pending [data-stream] {
+  opacity: 0;
+  animation: stream-fallback 0s 2.5s forwards;
+}
+@keyframes stream-fallback {
+  to {
+    opacity: 1;
+  }
+}
+.tok {
+  position: relative;
+  white-space: nowrap;
+  border-radius: 0.18em;
+}
+/* Not generated yet: the real text keeps its space but is invisible, and noise of
+   the same shape is drawn over it. */
+.tok:not(.on) {
+  color: transparent;
+}
+.tok:not(.on)::before {
+  content: attr(data-s);
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--muted);
+  opacity: 0.4;
+}
+.tok.on {
+  animation: tok-flash 0.9s ease-out both;
+}
+.tok.c1 { --tok: var(--tok-1); }
+.tok.c2 { --tok: var(--tok-2); }
+.tok.c3 { --tok: var(--tok-3); }
+.tok.c4 { --tok: var(--tok-4); }
+.tok.c5 { --tok: var(--tok-5); }
+@keyframes tok-flash {
+  0%,
+  35% {
+    background-color: var(--tok);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+.tok-cursor {
+  display: inline-block;
+  width: 0;
+  position: relative;
+}
+.tok-cursor::after {
+  content: '';
+  position: absolute;
+  left: 0.1em;
+  bottom: -0.08em;
+  width: 0.34em;
+  height: 0.86em;
+  border-radius: 0.06em;
+  background: var(--accent-2);
+  animation: cursor-blink 1s steps(1) infinite;
+}
+@keyframes cursor-blink {
+  50% {
+    opacity: 0;
+  }
+}
+</style>

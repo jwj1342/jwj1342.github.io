@@ -1,0 +1,83 @@
+---
+import { Image } from 'astro:assets';
+import { site } from '../data/site';
+import pond from '../assets/art/water-lilies-morning.jpg';
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="art" aria-hidden="true">
+    <Image src={pond} alt="" widths={[900, 1600]} sizes="100vw" quality={50} loading="lazy" />
+  </div>
+  <div class="wrap inner">
+    <span>© {year} {site.name}</span>
+    <span class="links">
+      <a href={`mailto:${site.email}`}>Email</a>
+      {site.links.map((l) => <a href={l.href} target="_blank" rel="noopener me">{l.label}</a>)}
+      <a href="/rss.xml">RSS</a>
+    </span>
+  </div>
+  <p class="wrap credit">Water Lilies, Morning</p>
+</footer>
+
+<style>
+  footer {
+    position: relative;
+    margin-top: clamp(3rem, 8vw, 6rem);
+    padding: clamp(4.5rem, 11vw, 8rem) 0 1.75rem;
+    color: var(--ink);
+    font-size: 0.85rem;
+    overflow: hidden;
+  }
+  /* the painting rises out of the page: invisible at the top, strongest at the bottom */
+  .art {
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.5) 45%, #000 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.5) 45%, #000 100%);
+    opacity: 0.5;
+  }
+  .art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 100%;
+  }
+  :global(:root[data-theme='dark']) .art {
+    opacity: 0.4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .art {
+      opacity: 0.4;
+    }
+  }
+  .inner,
+  .credit {
+    position: relative;
+  }
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+  }
+  a {
+    text-decoration: none;
+    padding: 0.6rem 0;
+    display: inline-block;
+  }
+  .credit {
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.82rem;
+    opacity: 0.6;
+  }
+</style>

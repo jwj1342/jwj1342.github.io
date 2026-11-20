@@ -1,0 +1,230 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PubLinks from '../components/PubLinks.astro';
+import ArtBanner from '../components/ArtBanner.astro';
+import sunrise from '../assets/art/impression-sunrise.jpg';
+import { site } from '../data/site';
+
+const pubs = (await getCollection('publications')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const byYear = new Map<number, typeof pubs>();
+for (const p of pubs) {
+  const y = p.data.date.getUTCFullYear();
+  byYear.set(y, [...(byYear.get(y) ?? []), p]);
+}
+const years = await Promise.all(
+  [...byYear.entries()].map(async ([year, items]) => ({
+    year,
+    items: await Promise.all(
+      items.map(async (p) => ({ p, Content: p.body?.trim() ? (await render(p)).Content : null })),
+    ),
+  })),
+);
+---
+
+<Base title="Publications" description="Publications by Wenjia Jiang on LLM-based agents, multimodal learning and related topics.">
+  <ArtBanner image={sunrise} title="Impression, Sunrise" />
+  <div class="wrap">
+    <header class="page-head after-art">
+      <p class="eyebrow">Research</p>
+      <h1>Publications</h1>
+    </header>
+
+    {
+      years.map(({ year, items }) => (
+        <section class="year">
+          <h2>{year}</h2>
+          <ol>
+            {items.map(({ p, Content }) => (
+              <li id={p.id} class:list={{ 'with-figure': !!p.data.image }}>
+                {p.data.image && (
+                  <a class="figure" href={p.data.image} target="_blank" rel="noopener" aria-label={`Figure from ${p.data.title}`}>
+                    <img
+                      src={p.data.image}
+                      alt=""
+                      width={p.data.imageWidth}
+                      height={p.data.imageHeight}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </a>
+                )}
+                <div class="text">
+                  <span class:list={['badge', { quiet: p.data.preprint }]}>{p.data.badge}</span>
+                  <h3>{p.data.title}</h3>
+                  <p class="authors">
+                    {p.data.authors.map((a, i) => (
+                      <>
+                        {a === site.name ? <b>{a}</b> : a}
+                        {i < p.data.authors.length - 1 ? ', ' : ''}
+                      </>
+                    ))}
+                  </p>
+                  <p class="venue">{p.data.venue}</p>
+                  <PubLinks links={p.data.links} doi={p.data.doi} />
+                  {Content && (
+                    <details>
+                      <summary>Abstract</summary>
+                      <div class="abstract">
+                        <Content />
+                      </div>
+                    </details>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<script>
+  // Coming from the homepage with /publications/#paper: open that paper's abstract.
+  function openTarget() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const details = id ? document.getElementById(id)?.querySelector('details') : null;
+    if (details) details.open = true;
+  }
+  openTarget();
+  addEventListener('hashchange', openTarget);
+</script>
+
+<style>
+  .year {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    border-top: 1px solid var(--line);
+    padding: clamp(1.75rem, 4vw, 3rem) 0;
+  }
+  h2 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+    line-height: 1.2;
+    margin: 0;
+    color: var(--muted);
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  li {
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--line);
+  }
+  li:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+  li:last-child {
+    padding-bottom: 0;
+  }
+  li:target h3 {
+    color: var(--accent);
+  }
+  h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(1.2rem, 2vw, 1.4rem);
+    line-height: 1.3;
+    margin: 0.55rem 0 0.4rem;
+  }
+  .authors,
+  .venue {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .authors b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .venue {
+    font-style: italic;
+  }
+  .text :global(.pub-links) {
+    margin-top: 0.9rem;
+  }
+  .figure {
+    display: block;
+    background: var(--figure);
+    border: 1px solid var(--line);
+    border-radius: 0.6rem;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 1rem;
+  }
+  .figure:hover {
+    border-color: var(--accent);
+  }
+  .figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.4rem;
+  }
+  @media (min-width: 40rem) {
+    li.with-figure {
+      display: grid;
+      grid-template-columns: 14rem minmax(0, 1fr);
+      gap: 1.75rem;
+      align-items: start;
+    }
+    .figure {
+      margin-bottom: 0;
+    }
+  }
+  details {
+    margin-top: 0.5rem;
+  }
+  summary {
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--muted);
+    padding: 0.6rem 0;
+    width: fit-content;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::before {
+    content: '+';
+    display: inline-block;
+    width: 1em;
+    font-family: var(--mono);
+  }
+  details[open] summary::before {
+    content: '−';
+  }
+  summary:hover {
+    color: var(--accent);
+  }
+  .abstract {
+    max-width: var(--prose);
+    font-size: 0.95rem;
+    color: var(--muted);
+    border-left: 2px solid var(--line);
+    padding-left: 1rem;
+  }
+  .abstract :global(p) {
+    margin: 0 0 0.8rem;
+  }
+  @media (min-width: 52rem) {
+    .year {
+      grid-template-columns: 13rem minmax(0, 1fr);
+      gap: 3rem;
+    }
+    h2 {
+      position: sticky;
+      top: calc(var(--header-h) + 1.75rem);
+      align-self: start;
+    }
+  }
+</style>

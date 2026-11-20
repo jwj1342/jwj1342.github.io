@@ -1,0 +1,97 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, getTranslations, htmlLang } from '../lib/util';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  showDescription?: boolean;
+}
+const { posts, showDescription = false } = Astro.props;
+const translations = await getTranslations();
+---
+
+<ul class="posts">
+  {
+    posts.map((post) => {
+      const tr = translations.get(post.id);
+      const orig = post.data.lang;
+      return (
+        <li>
+          <a href={`/blog/${post.id}/`}>
+            <span class="main">
+              <span class="t" data-i18n data-orig={orig} data-single={!tr}>
+                <span data-l={orig} lang={htmlLang(orig)}>{post.data.title}</span>
+                {tr && <span data-l={tr.data.lang} lang={htmlLang(tr.data.lang)}>{tr.data.title}</span>}
+              </span>
+              {showDescription && post.data.description && (
+                <span class="d" data-i18n data-orig={orig} data-single={!tr?.data.description}>
+                  <span data-l={orig} lang={htmlLang(orig)}>{post.data.description}</span>
+                  {tr?.data.description && (
+                    <span data-l={tr.data.lang} lang={htmlLang(tr.data.lang)}>{tr.data.description}</span>
+                  )}
+                </span>
+              )}
+            </span>
+            <span class="m">
+              <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+              <span class="tag" title={`Written in ${orig === 'zh' ? 'Chinese' : 'English'}`}>{orig === 'zh' ? '中文' : 'EN'}</span>
+              {post.data.draft && <span class="tag">Draft</span>}
+            </span>
+          </a>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    border-top: 1px solid var(--line);
+  }
+  li:first-child {
+    border-top: 0;
+  }
+  a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.3rem;
+    padding: 1rem 0;
+    text-decoration: none;
+  }
+  li:first-child a {
+    padding-top: 0;
+  }
+  .main {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .t {
+    font-family: var(--serif);
+    font-size: clamp(1.2rem, 2vw, 1.35rem);
+    line-height: 1.35;
+  }
+  .d {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .m {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  @media (min-width: 36rem) {
+    a {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: baseline;
+    }
+  }
+</style>
