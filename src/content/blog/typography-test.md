@@ -3,7 +3,6 @@ title: 排版测试：中文、代码与公式
 description: 一篇用来检查博客排版的草稿，上线前可以删除。
 date: 2026-11-19
 lang: zh
-tags: [meta]
 draft: true
 ---
 

@@ -3,7 +3,6 @@ title: 这个主页是怎么搭起来的
 description: 从 Jekyll 模板到 Astro 和 Cloudflare：为什么这么选，配色和字体是怎么定的，以及一路上踩过的几个坑。
 date: 2026-11-20
 lang: zh
-tags: [meta, astro, cloudflare]
 ---
 
 我的旧主页是一个 Jekyll 的学术模板，挂在 GitHub Pages 上。它能用，但我每次想加点自己的东西，都得先去读别人写的模板。
@@ -44,7 +43,6 @@ const blog = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     lang: z.enum(['en', 'zh']).default('en'),
-    tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),
 });

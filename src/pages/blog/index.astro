@@ -7,7 +7,6 @@ import lilies from '../../assets/art/water-lilies-1906.jpg';
 import { getPosts } from '../../lib/util';
 
 const posts = await getPosts();
-const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
 ---
 
 <Base title="Blog" description="Notes by Wenjia Jiang on research, engineering and life, in English and Chinese.">
@@ -19,17 +18,6 @@ const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
       <p>Notes on research, engineering and life, written in English or Chinese. Pick a language to read everything in it.</p>
       <div class="switch"><LangSwitch /></div>
     </header>
-    {
-      tags.length > 0 && (
-        <p class="tags">
-          {tags.map((t) => (
-            <a class="tag" href={`/blog/tags/${t}/`}>
-              {t}
-            </a>
-          ))}
-        </p>
-      )
-    }
     <div class="list">
       {posts.length > 0 ? <PostList posts={posts} showDescription /> : <p class="empty">No posts yet. The first one is on its way.</p>}
     </div>
@@ -39,17 +27,6 @@ const tags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
 <style>
   .switch {
     margin-top: 1.25rem;
-  }
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    margin: 0 0 1.5rem;
-  }
-  .tags .tag {
-    min-height: 2rem;
-    padding: 0 0.65rem;
-    font-size: 0.8rem;
   }
   .list {
     border-top: 1px solid var(--line);

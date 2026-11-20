@@ -34,7 +34,6 @@ const translations = await getTranslations();
             </span>
             <span class="m">
               <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-              <span class="tag" title={`Written in ${orig === 'zh' ? 'Chinese' : 'English'}`}>{orig === 'zh' ? '中文' : 'EN'}</span>
               {post.data.draft && <span class="tag">Draft</span>}
             </span>
           </a>

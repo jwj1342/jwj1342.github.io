@@ -39,7 +39,6 @@ const titles = (p: typeof post) => ({ orig: p.data.lang, title: p.data.title, tr
         <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
         {post.data.updated && <span>· Updated {formatDate(post.data.updated)}</span>}
         {post.data.draft && <span class="tag">Draft</span>}
-        {post.data.tags.map((t) => <a class="tag" href={`/blog/tags/${t}/`}>{t}</a>)}
       </p>
     </header>
 

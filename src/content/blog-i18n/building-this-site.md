@@ -4,7 +4,7 @@ description: "From a Jekyll template to Astro and Cloudflare: why these choices,
 lang: en
 # Translated by Claude, not by scripts/translate.mjs. `npm run translate` will redo it when
 # the Chinese post changes; add "locked: true" to keep this version instead.
-sourceHash: 7f5e37d98ccd7c68
+sourceHash: 7aa2f5278e58baba
 model: "claude"
 ---
 
@@ -46,7 +46,6 @@ const blog = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     lang: z.enum(['en', 'zh']).default('en'),
-    tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),
 });

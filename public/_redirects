@@ -18,3 +18,5 @@
 /awards/ / 301
 /awards/* / 301
 /publication/* /publications/ 301
+# tag pages were removed from the blog
+/blog/tags/* /blog/ 301

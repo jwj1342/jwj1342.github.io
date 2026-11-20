@@ -42,7 +42,6 @@ title: My post
 description: One sentence for the list page and link previews.
 date: 2026-12-01
 lang: en        # or zh
-tags: [agents]
 draft: true     # visible in `npm run dev` only; remove to publish
 ---
 

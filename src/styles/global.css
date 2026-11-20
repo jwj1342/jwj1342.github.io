@@ -204,9 +204,6 @@ h3 {
   color: var(--muted);
   text-decoration: none;
 }
-a.tag:hover {
-  border-color: var(--accent);
-}
 
 @media (prefers-reduced-motion: reduce) {
   *,
