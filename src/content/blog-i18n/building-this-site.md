@@ -4,7 +4,7 @@ description: "From a Jekyll template to Astro and Cloudflare, with the reasons f
 lang: en
 # Translated by Claude, not by scripts/translate.mjs. `npm run translate` will redo it when
 # the Chinese post changes; add "locked: true" to keep this version instead.
-sourceHash: c4e077a8c437f537
+sourceHash: 84c86730a0daf1fb
 model: "claude"
 ---
 
@@ -142,7 +142,7 @@ The career section is drawn as `git log --graph`. The main line is a commit hist
 
 Pop Cat, at the bottom of the screen, is a real language model. It is Qwen3.5 0.8B, running in your own browser through [WebLLM](https://webllm.mlc.ai), on your graphics card, which is to say on WebGPU. There is no inference server behind it and no API key.
 
-The weights download only when you ask your first question. They are about 430 MB and then stay in the browser's cache. The model runs in a background thread, so the page does not freeze while it thinks.
+The weights download only when you ask your first question. They are about 430 MB and then stay in the browser's cache. The model runs in a background thread, so the page does not freeze while it thinks. If your browser does not support WebGPU, the cat tells you so as soon as you open the chat box and switches the input off, so you are never left stuck after clicking.
 
 The weights are in my own R2 bucket. WebLLM downloads from Hugging Face by default, and that address cannot be reached from mainland China. R2 has another advantage in that download traffic is free, which matters for a 430 MB file.
 
@@ -253,7 +253,7 @@ flowchart LR
   B["A page opens"] --> W["Worker<br/>reads the visitor's city"] --> D[("D1")] --> M["Visitor map"]
 ```
 
-The back end is the Worker described above, about two hundred lines of it. Each page reports to `/api/log` once when it opens, using `sendBeacon`. Cloudflare attaches its estimate of the visitor's location to every request, in `request.cf`, down to the city. The Worker only has to read the city and write it to D1, and no third-party analytics script is needed. The map on the homepage then fetches those cities back from a second address and draws them as dots.
+The back end is the Worker described above, about two hundred lines of it. Each page reports to `/api/log` once when it opens, using `sendBeacon`. Cloudflare attaches its estimate of the visitor's location to every request, in `request.cf`, down to the city. The Worker only has to read the city and write it to D1, and no third-party analytics script is needed. The map on the homepage then fetches those cities back from a second address and draws them as dots. It is drawn with the same d3-geo and Natural Earth data as the globe, with the orthographic projection swapped for the flat Natural Earth projection.
 
 I set myself a few rules. No IP addresses are stored, no cookies are set, and location goes only to the city. The pages of one visit are tied together by a random id that is valid only in the current browser tab, and when the tab is closed it is gone.
 
@@ -273,7 +273,7 @@ I was going to stack a strict limit on top accordingly, and then took a differen
 
 A few more small things. None of them makes a section, but each took time.
 
-The star and citation counts next to papers are fetched at build time from GitHub and OpenAlex, and refreshed once more in the browser after the page opens. GitHub's anonymous API allows only 60 requests an hour, so when a lookup fails the last saved number is used.
+The star and citation counts next to papers are fetched at build time from GitHub and OpenAlex, and refreshed once more in the browser after the page opens. GitHub's anonymous API allows only 60 requests an hour from one IP address, and on a campus network or conference Wi-Fi many people share one address, so the numbers a browser fetches are kept locally for an hour and not requested again in that time, and when a lookup fails the last saved number is used.
 
 Styles on old phones caused trouble. The build tool by default rewrites media queries into a newer syntax that Safari before 16.4 does not understand, and it ignores the whole rule. The fix is to tell the build tool that the CSS it outputs must be readable by old browsers.
 

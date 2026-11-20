@@ -319,7 +319,7 @@ function init(root: HTMLElement) {
     if (!adapter) {
       state = 'unsupported';
       greeting.textContent = meow(
-        'I am a small model that runs inside the browser, and this browser cannot run me: I need WebGPU. Try a recent Chrome, Edge or Safari.',
+        'I am a small model that runs inside the browser, and this browser cannot run me: I need WebGPU. Try a recent Chrome, Edge or Safari. You can still reach Wenjia by email, from the link at the bottom of the page.',
         cries,
       );
       chips.hidden = true;

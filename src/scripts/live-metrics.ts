@@ -1,16 +1,19 @@
 /**
  * Refreshes the GitHub star and citation numbers after the page has loaded, so they
  * stay current between deployments. The numbers baked in at build time are shown
- * first and are kept if a request fails. Results are remembered for an hour per
- * browser tab session to avoid asking again on every page view.
+ * first and are kept if a request fails. Results are remembered in the browser for an
+ * hour (localStorage, so across tabs and visits), to avoid asking again on every page
+ * view: GitHub allows only 60 anonymous requests an hour from one IP address, which
+ * everyone on the same campus or conference Wi-Fi shares.
  */
 import { formatCount, openAlexUrl } from '../lib/metrics-format';
 
 const TTL_MS = 60 * 60 * 1000;
+const STORE = 'metrics:'; // prefix of our keys in localStorage
 
 function cached(key: string): number | undefined {
   try {
-    const raw = sessionStorage.getItem(key);
+    const raw = localStorage.getItem(STORE + key);
     if (!raw) return undefined;
     const { v, t } = JSON.parse(raw) as { v: number; t: number };
     return Date.now() - t < TTL_MS ? v : undefined;
@@ -20,7 +23,7 @@ function cached(key: string): number | undefined {
 }
 function remember(key: string, v: number) {
   try {
-    sessionStorage.setItem(key, JSON.stringify({ v, t: Date.now() }));
+    localStorage.setItem(STORE + key, JSON.stringify({ v, t: Date.now() }));
   } catch {}
 }
 
